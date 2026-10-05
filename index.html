@@ -102,28 +102,32 @@
         }
 
         .card-img-box {
-            height: 280px;
+            width: 100%;
+            height: 320px;
             position: relative;
             background: #111;
+            overflow: hidden;
         }
 
         .card-img-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
         }
 
         .badge-ep {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             color: var(--accent);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 6px;
             font-size: 0.8rem;
             font-weight: bold;
             backdrop-filter: blur(5px);
+            z-index: 2;
         }
 
         .card-body {
@@ -176,43 +180,44 @@
         <h2>📅 جدول پخش هفتگی انیمه‌ها</h2>
         
         <div class="schedule-tabs">
-            <button class="tab-btn active" onclick="filterDay('all')">همه انیمه‌ها</button>
-            <button class="tab-btn" onclick="filterDay('saturday')">شنبه</button>
-            <button class="tab-btn" onclick="filterDay('sunday')">یکشنبه</button>
-            <button class="tab-btn" onclick="filterDay('monday')">دوشنبه</button>
-            <button class="tab-btn" onclick="filterDay('tuesday')">سه‌شنبه</button>
-            <button class="tab-btn" onclick="filterDay('wednesday')">چهارشنبه</button>
-            <button class="tab-btn" onclick="filterDay('thursday')">پنجشنبه</button>
-            <button class="tab-btn" onclick="filterDay('friday')">جمعه</button>
+            <button class="tab-btn active" onclick="filterDay('all', this)">همه انیمه‌ها</button>
+            <button class="tab-btn" onclick="filterDay('saturday', this)">شنبه</button>
+            <button class="tab-btn" onclick="filterDay('sunday', this)">یکشنبه</button>
+            <button class="tab-btn" onclick="filterDay('monday', this)">دوشنبه</button>
+            <button class="tab-btn" onclick="filterDay('tuesday', this)">سه‌شنبه</button>
+            <button class="tab-btn" onclick="filterDay('wednesday', this)">چهارشنبه</button>
+            <button class="tab-btn" onclick="filterDay('thursday', this)">پنجشنبه</button>
+            <button class="tab-btn" onclick="filterDay('friday', this)">جمعه</button>
         </div>
 
         <div class="grid-container" id="animeGrid"></div>
     </div>
 
     <script>
+        // دیتای انیمه‌ها با تاریخ‌های دقیق انتشار قسمت‌های جدید
         const animeData = [
             {
-                name: "Black Clover",
+                name: "Black Clover (Season 2)",
                 episode: "قسمت بعدی",
-                day: "wednesday",
+                day: "saturday",
                 image: "https://cdn.myanimelist.net/images/anime/2/88336l.jpg",
-                targetDate: new Date(Date.now() + 86400000 * 2).toISOString(),
+                targetDate: "2026-10-10T23:00:00", 
                 link: "#"
             },
             {
-                name: "Blue Box",
+                name: "Blue Box (Season 2)",
                 episode: "قسمت بعدی",
                 day: "sunday",
                 image: "https://cdn.myanimelist.net/images/anime/1092/142981l.jpg",
-                targetDate: new Date(Date.now() + 86400000 * 1).toISOString(),
+                targetDate: "2026-10-11T22:00:00",
                 link: "#"
             },
             {
-                name: "The Prince of Tennis",
+                name: "The Prince of Tennis II",
                 episode: "قسمت بعدی",
                 day: "saturday",
                 image: "https://cdn.myanimelist.net/images/anime/11/75217l.jpg",
-                targetDate: new Date(Date.now() + 86400000 * 3).toISOString(),
+                targetDate: "2026-10-17T20:00:00",
                 link: "#"
             }
         ];
@@ -251,11 +256,14 @@
             });
         }
 
-        function filterDay(day) {
+        function filterDay(day, btnElement) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            btnElement.classList.add('active');
             renderAnime(day);
         }
+
+        renderAnime('all');
+        setInterval(updateTimers, 1000);
 
         function updateTimers() {
             animeData.forEach((item, index) => {
@@ -279,9 +287,6 @@
                 }
             });
         }
-
-        renderAnime('all');
-        setInterval(updateTimers, 1000);
     </script>
 
 </body>
