@@ -46,6 +46,54 @@
             padding: 0 20px;
         }
 
+        /* پنل ادمین */
+        .admin-panel {
+            background: var(--sidebar-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #2d3139;
+            margin-bottom: 30px;
+        }
+
+        .admin-panel h3 {
+            margin-top: 0;
+            color: var(--accent);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .admin-form {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-form input, .admin-form select {
+            background: var(--bg-color);
+            border: 1px solid #2d3139;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: Tahoma;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .admin-form button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .admin-form button:hover {
+            background: var(--accent-hover);
+        }
+
         h2 {
             border-right: 4px solid var(--accent);
             padding-right: 12px;
@@ -177,6 +225,24 @@
     </header>
 
     <div class="container">
+        <!-- پنل ادمین برای افزودن انیمه جدید -->
+        <div class="admin-panel">
+            <h3>🛠️️ پنل ادمین (افزودن انیمه جدید)</h3>
+            <div class="admin-form">
+                <input type="text" id="animeNameInput" placeholder="نام انیمه (به انگلیسی، مثلا: Naruto)">
+                <select id="animeDayInput">
+                    <option value="saturday">شنبه</option>
+                    <option value="sunday">یکشنبه</option>
+                    <option value="monday">دوشنبه</option>
+                    <option value="tuesday">سه‌شنبه</option>
+                    <option value="wednesday">چهارشنبه</option>
+                    <option value="thursday">پنجشنبه</option>
+                    <option value="friday">جمعه</option>
+                </select>
+                <button onclick="addNewAnime()">اضافه کردن انیمه</button>
+            </div>
+        </div>
+
         <h2>📅 جدول پخش هفتگی انیمه‌ها</h2>
         
         <div class="schedule-tabs">
@@ -194,35 +260,71 @@
     </div>
 
     <script>
-        // دیتای انیمه‌ها با تاریخ‌های دقیق انتشار قسمت‌های جدید
-        const animeData = [
+        // دیتای پایه (اگر در حافظه مرورگر چیزی نبود)
+        let animeData = JSON.parse(localStorage.getItem('myAnimeList')) || [
             {
-                name: "Black Clover (Season 2)",
+                name: "Black Clover",
                 episode: "قسمت بعدی",
-                day: "saturday",
+                day: "wednesday",
                 image: "https://cdn.myanimelist.net/images/anime/2/88336l.jpg",
-                targetDate: "2026-10-10T23:00:00", 
+                targetDate: "2026-10-07T18:00:00", 
                 link: "#"
             },
             {
-                name: "Blue Box (Season 2)",
+                name: "Blue Box",
                 episode: "قسمت بعدی",
                 day: "sunday",
                 image: "https://cdn.myanimelist.net/images/anime/1092/142981l.jpg",
-                targetDate: "2026-10-11T22:00:00",
-                link: "#"
-            },
-            {
-                name: "The Prince of Tennis II",
-                episode: "قسمت بعدی",
-                day: "saturday",
-                image: "https://cdn.myanimelist.net/images/anime/11/75217l.jpg",
-                targetDate: "2026-10-17T20:00:00",
+                targetDate: "2026-10-11T17:30:00",
                 link: "#"
             }
         ];
 
+        let currentFilter = 'all';
+
+        async function addNewAnime() {
+            const nameInput = document.getElementById('animeNameInput');
+            const dayInput = document.getElementById('animeDayInput');
+            const animeName = nameInput.value.trim();
+
+            if (!animeName) {
+                alert('لطفاً نام انیمه را وارد کنید.');
+                return;
+            }
+
+            // جستجوی خودکار عکس و اطلاعات از طریق API عمومی MyAnimeList
+            try {
+                const response = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(animeName)}&limit=1`);
+                const data = await response.json();
+
+                let imageUrl = "https://cdn.myanimelist.net/images/anime/1255/142475l.jpg"; // عکس پیش‌فرض
+                if (data.data && data.data.length > 0) {
+                    imageUrl = data.data[0].images.jpg.large_image_url || data.data[0].images.jpg.image_url;
+                }
+
+                const newAnime = {
+                    name: animeName,
+                    episode: "قسمت بعدی",
+                    day: dayInput.value,
+                    image: imageUrl,
+                    targetDate: new Date(Date.now() + 86400000 * 5).toISOString(), // ۵ روز بعد به عنوان پیش‌فرض
+                    link: "#"
+                };
+
+                animeData.push(newAnime);
+                localStorage.setItem('myAnimeList', JSON.stringify(animeData)); // ذخیره در مرورگر
+                
+                nameInput.value = '';
+                renderAnime(currentFilter);
+                alert('انیمه با موفقیت اضافه شد!');
+
+            } catch (error) {
+                alert('خطا در دریافت اطلاعات انیمه. لطفاً دوباره تلاش کنید.');
+            }
+        }
+
         function renderAnime(filter = 'all') {
+            currentFilter = filter;
             const grid = document.getElementById('animeGrid');
             grid.innerHTML = '';
 
