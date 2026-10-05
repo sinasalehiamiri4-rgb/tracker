@@ -244,6 +244,345 @@ function dlLink(it){
   const fill=s=>s.replace(/\{ep\}/g,ep).replace(/\{name\}/g,encodeURIComponent(it.name)).replace(/\{year\}/g,it.year||'');
   if(it.link)return fill(it.link);
   let tpl='';try{tpl=localStorage.getItem('anitracker_tpl')||''}catch(e){}
+  return fill(tpl||'https://zarfilm.com/?s={name}');
+  return 'https://www.google.com/search?q='+encodeURIComponent(it.name+(it.type==='movie'?' '+(it.year||''):' episode '+ep)+' download');
+}
+
+/* ---- رندر ---- */
+function render(){
+  const grid=$('grid');grid.textContent='';
+  const items=filter==='all'?list:list.filter(i=>i.day===filter);
+  if(!items.length){
+    const p=document.createElement('p');p.className='empty';
+    p.textContent='چیزی برای این روز ثبت نشده. از بالا جستجو و اضافه کنید.';
+    grid.appendChild(p);return;
+  }
+  items.forEach(it=>{
+    const movie=it.type==='movie';
+    const c=document.createElement('div');c.className='card';
+    c.innerHTML=`
+      <div class="img"><span class="badge"></span>
+        <button class="del" title="حذف" aria-label="حذف">✕</button>
+        <img loading="lazy" referrerpolicy="no-referrer" alt=""></div>
+      <div class="body"><h3 class="title"></h3><div class="meta"></div>
+        <div class="timer" data-id="${it.id}"></div></div>
+      <div class="actions">
+        <a class="btn dl" target="_blank" rel="noopener"></a>
+        <button class="btn ok next" hidden>✔ دانلود شد، قسمت بعدی</button>
+        <button class="btn ghost setlink">✏️ لینک دانلود</button>
+        <button class="btn ghost setimg">🖼 تغییر عکس</button>
+      </div>`;
+    c.querySelector('.badge').textContent=movie?'فیلم':'قسمت '+toFa(it.episode);
+    const t=c.querySelector('.title');t.textContent=it.name;t.title=it.name;
+    c.querySelector('.meta').textContent=(TYPE_FA[it.type]||'')+(it.year?' • '+it.year:'');
+    c.querySelector('.dl').textContent=movie?'⬇ دانلود فیلم':'⬇ دانلود قسمت جدید';
+    if(movie)c.querySelector('.timer').remove();
+    const box=c.querySelector('.img'),img=c.querySelector('img');
+    img.alt=it.name;
+    img.onload=()=>box.classList.add('loaded');
+    img.onerror=()=>{img.onerror=null;img.src=PH};
+    img.src=it.image||PH;
+    c.querySelector('.dl').href=dlLink(it);
+    c.querySelector('.del').onclick=()=>{if(confirm('«'+it.name+'» حذف شود؟')){list=list.filter(x=>x.id!==it.id);save();render()}};
+    c.querySelector('.next').onclick=()=>{
+      it.episode++;it.target=(it.target||Date.now())+7*864e5;
+      while(it.target<Date.now())it.target+=7*864e5;
+      save();render();
+    };
+    c.querySelector('.setlink').onclick=()=>{
+      const v=prompt('لینک دانلود (برای شماره قسمت از {ep} استفاده کنید):',it.link||'');
+      if(v!==null){it.link=v.trim();save();render()}
+    };
+    c.querySelector('.setimg').onclick=async()=>{
+      const v=prompt('لینک عکس را وارد کنید:',it.image&&!it.image.startsWith('data:')?it.image:'');
+      if(v){it.image=v.trim();save();render();const d=await cacheImg(it.image);if(d!==it.image){it.image=d;save();render()}}
+    };
+    grid.appendChild(c);
+  });
+  updateTimers();
+}
+function updateTimers(){
+  document.querySelectorAll('.timer').forEach(el=>{
+    const it=list.find(x=>x.id===el.dataset.id);if(!it)return;
+    const nb=el.closest('.card').querySelector('.next');
+    if(!it.target){el.textContent='در حال دریافت زمان پخش...';return}
+    const diff=it.target-Date.now();
+    if(diff<=0){el.textContent='منتشر شد! ✅';el.classList.add('out');nb.hidden=false}
+    else{
+      el.classList.remove('out');nb.hidden=true;
+      const p=n=>toFa(String(n).padStart(2,'0'));
+      el.textContent='⏳ '+toFa(Math.floor(diff/864e5))+' روز و '+p(Math.floor(diff%864e5/36e5))+':'+p(Math.floor(diff%36e5/6e4))+':'+p(Math.floor(diff%6e4/1e3));
+    }
+  });
+}
+
+DAYS.forEach(([k,l])=>{
+  const b=document.createElement('button');
+  b.className='tab'+(k==='all'?' active':'');b.textContent=l;
+  b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=k;render()};
+  $('tabs').appendChild(b);
+});
+$('tplBtn').onclick=()=>{
+  let cur='';try{cur=localStorage.getItem('anitracker_tpl')||''}catch(e){}
+  const v=prompt('آدرس جستجوی سایت دانلود مورد نظرت را وارد کن.\nاز {name} برای نام، {ep} برای شماره قسمت و {year} برای سال استفاده کن.\nمثال: https://example.com/search?q={name}\nاگر فقط آدرس اصلی سایت را بدهی (مثل https://zarfilm.com/) خودش جستجو را می‌سازد. پیش‌فرض: زرفیلم.',cur);
+  if(v===null)return;
+  v=v.trim();
+  if(v&&!v.includes('{')){
+    try{const u=new URL(v);if(u.pathname==='/'&&!u.search)v=u.origin+'/?s={name}'}catch(e){}
+  }
+  try{localStorage.setItem('anitracker_tpl',v)}catch(e){}
+  render();
+};
+render();setInterval(updateTimers,1000);fillMissing();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AniTracker Hub</title>
+<style>
+:root{--bg:#0f1015;--side:#16181f;--card:#1e2029;--text:#fff;--muted:#9ca3af;--accent:#6366f1;--accent2:#4f46e5;--ok:#10b981;--warn:#f59e0b;--line:#2d3139}
+*{box-sizing:border-box}
+body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);margin:0}
+header{background:var(--side);padding:15px 30px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.logo{font-size:1.5rem;font-weight:bold;color:var(--accent)}
+.container{max-width:1200px;margin:30px auto;padding:0 20px}
+.admin{background:var(--side);padding:20px;border-radius:12px;border:1px solid var(--line);margin-bottom:30px}
+.admin h3{margin:0 0 15px;color:var(--accent);font-size:1.1rem}
+.form{display:flex;gap:12px;flex-wrap:wrap}
+.form input,.form select{background:var(--bg);border:1px solid var(--line);color:#fff;padding:10px 15px;border-radius:8px;font-family:inherit;flex:1;min-width:180px}
+button{font-family:inherit}
+.form button{background:var(--accent);color:#fff;border:0;padding:10px 20px;border-radius:8px;font-weight:bold;cursor:pointer}
+.form button:hover{background:var(--accent2)}
+.form button:disabled{opacity:.6;cursor:wait}
+:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+h2{border-right:4px solid var(--accent);padding-right:12px;margin-bottom:20px;font-size:1.3rem}
+.tabs{display:flex;gap:10px;margin-bottom:25px;overflow-x:auto;padding-bottom:5px}
+.tab{background:var(--side);color:var(--muted);border:1px solid var(--line);padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:bold;white-space:nowrap}
+.tab.active,.tab:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px}
+.card{background:var(--card);border-radius:12px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.3);border:1px solid var(--line);display:flex;flex-direction:column}
+.img{width:100%;aspect-ratio:2/3;position:relative;overflow:hidden;background:linear-gradient(110deg,#181a22 30%,#242733 50%,#181a22 70%);background-size:200% 100%;animation:sk 1.4s linear infinite}
+.img.loaded{animation:none;background:#111}
+@keyframes sk{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.img{animation:none}}
+.img img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s}
+.img.loaded img{opacity:1}
+.badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.75);color:var(--accent);padding:5px 12px;border-radius:6px;font-size:.8rem;font-weight:bold;z-index:2}
+.del{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.75);color:#f87171;border:0;border-radius:6px;width:30px;height:30px;cursor:pointer;z-index:2}
+.body{padding:15px;flex:1}
+.title{margin:0 0 6px;font-size:1.05rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{color:var(--muted);font-size:.8rem;margin-bottom:8px}
+.timer{font-size:.95rem;color:var(--warn);font-weight:bold}
+.timer.out{color:var(--ok)}
+.actions{padding:0 15px 15px;display:grid;gap:8px}
+.btn{background:var(--accent);color:#fff;text-decoration:none;text-align:center;padding:10px;border-radius:8px;display:block;font-weight:bold;border:0;cursor:pointer;font-size:.9rem}
+.btn:hover{background:var(--accent2)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.btn.ghost:hover{border-color:var(--accent);color:#fff}
+.btn.ok{background:var(--ok)}
+.empty{color:var(--muted);grid-column:1/-1;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:30px 15px;overflow:auto}
+.modal[hidden]{display:none}
+.box{background:var(--side);border:1px solid var(--line);border-radius:12px;padding:20px;width:100%;max-width:900px}
+.res{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin:15px 0}
+.r{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:pointer;color:#fff;padding:0;text-align:right}
+.r:hover{border-color:var(--accent)}
+.r img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block;background:#111}
+.r div{padding:8px;font-size:.8rem}
+.r small{color:var(--muted);display:block;margin-top:3px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⚡ AniTracker</div>
+  <button class="btn ghost" id="tplBtn" style="padding:8px 14px">⚙️ سایت دانلود</button>
+</header>
+
+<div class="container">
+  <div class="admin">
+    <h3>🔎 جستجو و افزودن (انیمه، سریال، فیلم)</h3>
+    <div class="form">
+      <input type="text" id="nameIn" placeholder="نام به انگلیسی، مثلا: Naruto یا Breaking Bad یا Inception">
+      <select id="dayIn">
+        <option value="saturday">شنبه</option><option value="sunday">یکشنبه</option>
+        <option value="monday">دوشنبه</option><option value="tuesday">سه‌شنبه</option>
+        <option value="wednesday">چهارشنبه</option><option value="thursday">پنجشنبه</option>
+        <option value="friday">جمعه</option>
+      </select>
+      <button id="addBtn">جستجو</button>
+    </div>
+  </div>
+
+  <h2>📅 جدول پخش هفتگی</h2>
+  <div class="tabs" id="tabs"></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong id="mTitle">نتایج جستجو</strong>
+      <button class="btn ghost" id="mClose" style="padding:6px 14px">بستن</button>
+    </div>
+    <div class="res" id="res"></div>
+    <div class="form">
+      <input type="text" id="manImg" placeholder="یا لینک عکس دلخواه (اختیاری)">
+      <button id="manBtn">افزودن دستی با همین نام</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS=[['all','همه'],['saturday','شنبه'],['sunday','یکشنبه'],['monday','دوشنبه'],['tuesday','سه‌شنبه'],['wednesday','چهارشنبه'],['thursday','پنجشنبه'],['friday','جمعه']];
+const JS_DAY={sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
+const TYPE_FA={anime:'انیمه',show:'سریال',movie:'فیلم'};
+const KEY='anitracker_v2';
+const PH='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect width="100%" height="100%" fill="#1e2029"/><text x="50%" y="50%" fill="#6b7280" font-size="20" text-anchor="middle" font-family="Arial">No Image</text></svg>');
+const $=id=>document.getElementById(id);
+const toFa=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s))return s}catch(e){}
+  return [
+    {id:uid(),name:'Black Clover',day:'saturday',type:'anime',episode:1,image:'',target:0,link:''},
+    {id:uid(),name:'Blue Box',day:'sunday',type:'anime',episode:1,image:'',target:0,link:''},
+    {id:uid(),name:'The Prince of Tennis',day:'wednesday',type:'anime',episode:1,image:'',target:0,link:''}
+  ];
+}
+let list=load(),filter='all',pending=null;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(list))}catch(e){}};
+
+/* ---- زمان‌ها ---- */
+function nextFromBroadcast(day,time){
+  const m=/^(\d{1,2}):(\d{2})$/.exec(time||'');
+  const idx=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'].indexOf((day||'').toLowerCase().replace(/s$/,''));
+  if(!m||idx<0)return 0;
+  const jst=Date.now()+9*3600e3,b=new Date(jst);
+  for(let i=0;i<=7;i++){
+    const c=Date.UTC(b.getUTCFullYear(),b.getUTCMonth(),b.getUTCDate()+i,+m[1],+m[2]);
+    if(new Date(c).getUTCDay()===idx&&c>jst)return c-9*3600e3;
+  }
+  return 0;
+}
+function nextFromDay(k){
+  const d=new Date();d.setHours(20,0,0,0);
+  let a=(JS_DAY[k]-d.getDay()+7)%7;
+  if(a===0&&d<=new Date())a=7;
+  d.setDate(d.getDate()+a);return d.getTime();
+}
+
+/* ---- منابع جستجو ---- */
+const getJSON=async u=>{const r=await fetch(u);if(!r.ok)throw 0;return r.json()};
+
+async function sMAL(q){
+  const j=await getJSON('https://api.jikan.moe/v4/anime?limit=5&sfw=true&q='+encodeURIComponent(q));
+  return j.data.map(a=>{const im=a.images.webp||a.images.jpg;return{
+    src:'MyAnimeList',type:'anime',title:a.title,year:a.year||'',
+    image:im.large_image_url||im.image_url,
+    target:nextFromBroadcast(a.broadcast&&a.broadcast.day,a.broadcast&&a.broadcast.time)}});
+}
+async function sIMDB(q){
+  const c=(q.trim()[0]||'x').toLowerCase();
+  const k=/[a-z0-9]/.test(c)?c:'x';
+  const j=await getJSON('https://v2.sg.media-imdb.com/suggestion/'+k+'/'+encodeURIComponent(q.trim())+'.json');
+  return (j.d||[]).filter(x=>x.i&&x.l&&x.id&&x.id.startsWith('tt')).slice(0,6).map(x=>({
+    src:'IMDb',type:/series|episode/i.test(x.q||'')?'show':'movie',title:x.l,year:x.y||'',image:x.i.imageUrl,target:0}));
+}
+async function sTV(q){
+  const j=await getJSON('https://api.tvmaze.com/search/shows?q='+encodeURIComponent(q));
+  return j.slice(0,5).map(x=>({
+    src:'TVmaze',type:'show',title:x.show.name,year:(x.show.premiered||'').slice(0,4),
+    image:x.show.image&&(x.show.image.original||x.show.image.medium)||'',target:0,tvid:x.show.id}));
+}
+async function searchAll(q){
+  const rs=await Promise.allSettled([sMAL(q),sIMDB(q),sTV(q)]);
+  return rs.flatMap(r=>r.status==='fulfilled'?r.value:[]);
+}
+
+/* ---- ذخیره عکس داخل مرورگر (تا بعداً هم بیاید) ---- */
+async function cacheImg(url){
+  if(!url||url.startsWith('data:'))return url;
+  try{
+    const b=await (await fetch(url)).blob();
+    const bm=await createImageBitmap(b);
+    const w=320,h=Math.round(bm.height*w/bm.width);
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    cv.getContext('2d').drawImage(bm,0,0,w,h);
+    return cv.toDataURL('image/jpeg',.8);
+  }catch(e){return url}
+}
+
+/* ---- افزودن ---- */
+async function addFrom(p,manualImg){
+  const day=$('dayIn').value;
+  const it={id:uid(),name:p.title,day,type:p.type||'anime',year:p.year||'',episode:1,
+    image:manualImg||p.image||'',target:p.target||0,link:''};
+  if(p.tvid){
+    try{
+      const j=await getJSON('https://api.tvmaze.com/shows/'+p.tvid+'?embed=nextepisode');
+      const e=j._embedded&&j._embedded.nextepisode;
+      if(e){it.target=new Date(e.airstamp).getTime();it.episode=e.number||1;it.season=e.season}
+    }catch(e){}
+  }
+  if(it.type!=='movie'&&!it.target)it.target=nextFromDay(day);
+  list.push(it);save();render();
+  const cached=await cacheImg(it.image);
+  if(cached!==it.image){it.image=cached;save();render();}
+}
+function openModal(items,name){
+  pending=name;const res=$('res');res.textContent='';
+  $('mTitle').textContent=items.length?'نتایج «'+name+'» را انتخاب کنید':'چیزی پیدا نشد (شاید اینترنت یا VPN). می‌توانید دستی اضافه کنید.';
+  items.forEach(p=>{
+    const b=document.createElement('button');b.className='r';
+    const im=document.createElement('img');im.referrerPolicy='no-referrer';im.loading='lazy';
+    im.onerror=()=>{im.onerror=null;im.src=PH};im.src=p.image||PH;
+    const d=document.createElement('div');
+    d.textContent=p.title;
+    const s=document.createElement('small');
+    s.textContent=TYPE_FA[p.type]+(p.year?' • '+p.year:'')+' • '+p.src;
+    d.appendChild(s);b.append(im,d);
+    b.onclick=()=>{$('modal').hidden=true;addFrom(p)};
+    res.appendChild(b);
+  });
+  $('modal').hidden=false;
+}
+$('addBtn').onclick=async function(){
+  const name=$('nameIn').value.trim();
+  if(!name){alert('لطفاً نام را وارد کنید.');return}
+  this.disabled=true;this.textContent='در حال جستجو...';
+  try{openModal(await searchAll(name),name)}finally{this.disabled=false;this.textContent='جستجو'}
+  $('nameIn').value='';
+};
+$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('addBtn').click()});
+$('mClose').onclick=()=>$('modal').hidden=true;
+$('manBtn').onclick=()=>{
+  $('modal').hidden=true;
+  addFrom({title:pending,type:'anime'},$('manImg').value.trim());$('manImg').value='';
+};
+
+/* ---- عکس‌های خالی را خودکار پر کن ---- */
+async function fillMissing(){
+  for(const it of list){
+    if(it.image)continue;
+    const r=(await searchAll(it.name)).find(x=>x.image);
+    if(r){it.image=await cacheImg(r.image);if(!it.target)it.target=r.target||nextFromDay(it.day);save();render()}
+    await new Promise(s=>setTimeout(s,500));
+  }
+  let ch=false;list.forEach(i=>{if(!i.target&&i.type!=='movie'){i.target=nextFromDay(i.day);ch=true}});
+  if(ch){save();render()}
+}
+
+/* ---- لینک دانلود ---- */
+function dlLink(it){
+  const ep=String(it.episode).padStart(2,'0');
+  const fill=s=>s.replace(/\{ep\}/g,ep).replace(/\{name\}/g,encodeURIComponent(it.name)).replace(/\{year\}/g,it.year||'');
+  if(it.link)return fill(it.link);
+  let tpl='';try{tpl=localStorage.getItem('anitracker_tpl')||''}catch(e){}
   if(tpl)return fill(tpl);
   return 'https://www.google.com/search?q='+encodeURIComponent(it.name+(it.type==='movie'?' '+(it.year||''):' episode '+ep)+' download');
 }
