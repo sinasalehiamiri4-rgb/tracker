@@ -260,25 +260,25 @@
     </div>
 
     <script>
-        // تبدیل اعداد انگلیسی به فارسی برای خوانایی بهتر
         function toPersianDigits(n) {
             const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
             return n.toString().replace(/\d/g, x => persianDigits[x]);
         }
 
+        // دیتا با روزهای پخش اصلاح‌شده شما
         let animeData = JSON.parse(localStorage.getItem('myAnimeList')) || [
             {
                 name: "Black Clover",
                 episode: "قسمت بعدی",
-                day: "tuesday",
+                day: "saturday", // شنبه
                 image: "https://cdn.myanimelist.net/images/anime/2/88336l.jpg",
-                targetDate: "2026-10-06T18:00:00", 
+                targetDate: "2026-10-10T18:00:00", 
                 link: "#"
             },
             {
                 name: "Blue Box",
                 episode: "قسمت بعدی",
-                day: "sunday",
+                day: "sunday", // یکشنبه
                 image: "https://cdn.myanimelist.net/images/anime/1092/142981l.jpg",
                 targetDate: "2026-10-11T17:30:00",
                 link: "#"
@@ -286,9 +286,9 @@
             {
                 name: "The Prince of Tennis",
                 episode: "قسمت بعدی",
-                day: "saturday",
+                day: "wednesday", // چهارشنبه
                 image: "https://cdn.myanimelist.net/images/anime/11/75217l.jpg",
-                targetDate: "2026-10-10T20:00:00",
+                targetDate: "2026-10-07T20:00:00",
                 link: "#"
             }
         ];
@@ -397,7 +397,6 @@
                     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-                    // تبدیل تمام اعداد شمارش معکوس به فارسی
                     const pDays = toPersianDigits(days);
                     const pHours = toPersianDigits(String(hours).padStart(2, '0'));
                     const pMinutes = toPersianDigits(String(minutes).padStart(2, '0'));
