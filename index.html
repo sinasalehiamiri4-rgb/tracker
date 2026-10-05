@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniTracker Hub</title>
+    <style>
+        :root {
+            --bg-color: #0f1015;
+            --sidebar-bg: #16181f;
+            --card-bg: #1e2029;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--sidebar-bg);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2d3139;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        h2 {
+            border-right: 4px solid var(--accent);
+            padding-right: 12px;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .schedule-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .tab-btn {
+            background: var(--sidebar-bg);
+            color: var(--text-muted);
+            border: 1px solid #2d3139;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .anime-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid #2d3139;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img-box {
+            height: 280px;
+            position: relative;
+            background: #111;
+        }
+
+        .card-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge-ep {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-title {
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .countdown-text {
+            font-size: 0.9rem;
+            color: var(--warning);
+            margin-bottom: 15px;
+            font-weight: bold;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .btn-dl {
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            display: block;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-dl:hover {
+            background: var(--accent-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">⚡ AniTracker</div>
+        <div style="color: var(--text-muted); font-size: 0.9rem;">سیستم پیگیری اختصاصی انیمه</div>
+    </header>
+
+    <div class="container">
+        <h2>📅 جدول پخش هفتگی انیمه‌ها</h2>
+        
+        <div class="schedule-tabs">
+            <button class="tab-btn active" onclick="filterDay('all')">همه انیمه‌ها</button>
+            <button class="tab-btn" onclick="filterDay('saturday')">شنبه</button>
+            <button class="tab-btn" onclick="filterDay('sunday')">یکشنبه</button>
+            <button class="tab-btn" onclick="filterDay('monday')">دوشنبه</button>
+            <button class="tab-btn" onclick="filterDay('tuesday')">سه‌شنبه</button>
+            <button class="tab-btn" onclick="filterDay('wednesday')">چهارشنبه</button>
+            <button class="tab-btn" onclick="filterDay('thursday')">پنجشنبه</button>
+            <button class="tab-btn" onclick="filterDay('friday')">جمعه</button>
+        </div>
+
+        <div class="grid-container" id="animeGrid"></div>
+    </div>
+
+    <script>
+        const animeData = [
+            {
+                name: "Black Clover",
+                episode: "قسمت بعدی",
+                day: "wednesday",
+                image: "https://cdn.myanimelist.net/images/anime/2/88336l.jpg",
+                targetDate: new Date(Date.now() + 86400000 * 2).toISOString(),
+                link: "#"
+            },
+            {
+                name: "Blue Box",
+                episode: "قسمت بعدی",
+                day: "sunday",
+                image: "https://cdn.myanimelist.net/images/anime/1092/142981l.jpg",
+                targetDate: new Date(Date.now() + 86400000 * 1).toISOString(),
+                link: "#"
+            },
+            {
+                name: "The Prince of Tennis",
+                episode: "قسمت بعدی",
+                day: "saturday",
+                image: "https://cdn.myanimelist.net/images/anime/11/75217l.jpg",
+                targetDate: new Date(Date.now() + 86400000 * 3).toISOString(),
+                link: "#"
+            }
+        ];
+
+        function renderAnime(filter = 'all') {
+            const grid = document.getElementById('animeGrid');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'all' ? animeData : animeData.filter(item => item.day === filter);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">انیمه‌ای برای این روز ثبت نشده است.</p>`;
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+
+                card.innerHTML = `
+                    <div>
+                        <div class="card-img-box">
+                            <span class="badge-ep">${item.episode}</span>
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title" title="${item.name}">${item.name}</h3>
+                            <div class="countdown-text" id="timer-${index}">محاسبه زمان...</div>
+                        </div>
+                    </div>
+                    <div style="padding: 0 15px 15px 15px;">
+                        <a href="${item.link}" target="_blank" class="btn-dl">🔗 لینک دانلود</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterDay(day) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderAnime(day);
+        }
+
+        function updateTimers() {
+            animeData.forEach((item, index) => {
+                const timerEl = document.getElementById(`timer-${index}`);
+                if (!timerEl) return;
+
+                const now = new Date().getTime();
+                const target = new Date(item.targetDate).getTime();
+                const diff = target - now;
+
+                if (diff <= 0) {
+                    timerEl.innerHTML = "منتشر شد! ✅";
+                    timerEl.style.color = "var(--success)";
+                } else {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    timerEl.innerHTML = `⏳ ${days} روز و ${hours}:${minutes}:${seconds}`;
+                }
+            });
+        }
+
+        renderAnime('all');
+        setInterval(updateTimers, 1000);
+    </script>
+
+</body>
+</html>
