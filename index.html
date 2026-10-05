@@ -265,12 +265,12 @@
             return n.toString().replace(/\d/g, x => persianDigits[x]);
         }
 
-        // دیتا با روزهای پخش اصلاح‌شده شما
+        // دیتای انیمه‌ها با روزهای پخش دقیق شما (بلک کلور شنبه، بلو باکس یکشنبه، پرنس آف تنیس چهارشنبه)
         let animeData = JSON.parse(localStorage.getItem('myAnimeList')) || [
             {
                 name: "Black Clover",
                 episode: "قسمت بعدی",
-                day: "saturday", // شنبه
+                day: "saturday",
                 image: "https://cdn.myanimelist.net/images/anime/2/88336l.jpg",
                 targetDate: "2026-10-10T18:00:00", 
                 link: "#"
@@ -278,7 +278,7 @@
             {
                 name: "Blue Box",
                 episode: "قسمت بعدی",
-                day: "sunday", // یکشنبه
+                day: "sunday",
                 image: "https://cdn.myanimelist.net/images/anime/1092/142981l.jpg",
                 targetDate: "2026-10-11T17:30:00",
                 link: "#"
@@ -286,7 +286,7 @@
             {
                 name: "The Prince of Tennis",
                 episode: "قسمت بعدی",
-                day: "wednesday", // چهارشنبه
+                day: "wednesday",
                 image: "https://cdn.myanimelist.net/images/anime/11/75217l.jpg",
                 targetDate: "2026-10-07T20:00:00",
                 link: "#"
