@@ -60,7 +60,7 @@ h2{border-right:4px solid var(--accent);padding-right:12px;margin-bottom:20px;fo
 <body>
 <header>
   <div class="logo">⚡ AniTracker</div>
-  <div style="color:var(--muted);font-size:.9rem">انیمه، سریال و فیلم</div>
+  <button class="btn ghost" id="tplBtn" style="padding:8px 14px">⚙️ سایت دانلود</button>
 </header>
 
 <div class="container">
@@ -241,7 +241,10 @@ async function fillMissing(){
 /* ---- لینک دانلود ---- */
 function dlLink(it){
   const ep=String(it.episode).padStart(2,'0');
-  if(it.link)return it.link.replace('{ep}',ep);
+  const fill=s=>s.replace(/\{ep\}/g,ep).replace(/\{name\}/g,encodeURIComponent(it.name)).replace(/\{year\}/g,it.year||'');
+  if(it.link)return fill(it.link);
+  let tpl='';try{tpl=localStorage.getItem('anitracker_tpl')||''}catch(e){}
+  if(tpl)return fill(tpl);
   return 'https://www.google.com/search?q='+encodeURIComponent(it.name+(it.type==='movie'?' '+(it.year||''):' episode '+ep)+' download');
 }
 
@@ -319,6 +322,13 @@ DAYS.forEach(([k,l])=>{
   b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=k;render()};
   $('tabs').appendChild(b);
 });
+$('tplBtn').onclick=()=>{
+  let cur='';try{cur=localStorage.getItem('anitracker_tpl')||''}catch(e){}
+  const v=prompt('آدرس جستجوی سایت دانلود مورد نظرت را وارد کن.\nاز {name} برای نام، {ep} برای شماره قسمت و {year} برای سال استفاده کن.\nمثال: https://example.com/search?q={name}\nخالی بگذاری، جستجوی گوگل استفاده می‌شود.',cur);
+  if(v===null)return;
+  try{localStorage.setItem('anitracker_tpl',v.trim())}catch(e){}
+  render();
+};
 render();setInterval(updateTimers,1000);fillMissing();
 </script>
 </body>
