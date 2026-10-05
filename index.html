@@ -4,12 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AniTracker Hub</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2048%2048%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20rx%3D%2212%22%20fill%3D%22%231e2029%22%20stroke%3D%22%232d3139%22/%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%2215%22%20fill%3D%22none%22%20stroke%3D%22%232d3139%22%20stroke-width%3D%223%22/%3E%3Cpath%20d%3D%22M24%209a15%2015%200%201%201-13.5%208.5%22%20fill%3D%22none%22%20stroke%3D%22%236366f1%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2210.5%22%20cy%3D%2217.5%22%20r%3D%222.6%22%20fill%3D%22%23f59e0b%22/%3E%3Cpath%20d%3D%22M20%2017.5v13l11-6.5z%22%20fill%3D%22%23fff%22/%3E%3C/svg%3E">
+<meta name="theme-color" content="#16181f">
 <style>
 :root{--bg:#0f1015;--side:#16181f;--card:#1e2029;--text:#fff;--muted:#9ca3af;--accent:#6366f1;--accent2:#4f46e5;--ok:#10b981;--warn:#f59e0b;--line:#2d3139}
 *{box-sizing:border-box}
 body{font-family:Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);margin:0}
 header{background:var(--side);padding:15px 30px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
-.logo{font-size:1.5rem;font-weight:bold;color:var(--accent)}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.4rem;font-weight:normal;color:var(--text);text-decoration:none;letter-spacing:.3px}
+.logo b{color:var(--accent)}
+.logo .mark{width:38px;height:38px;flex:none}
 .container{max-width:1200px;margin:30px auto;padding:0 20px}
 .admin{background:var(--side);padding:20px;border-radius:12px;border:1px solid var(--line);margin-bottom:30px}
 .admin h3{margin:0 0 15px;color:var(--accent);font-size:1.1rem}
@@ -81,7 +85,7 @@ header{padding-top:max(15px,env(safe-area-inset-top))}
 </head>
 <body>
 <header>
-  <div class="logo">⚡ AniTracker</div>
+  <a class="logo" href="./" aria-label="AniTracker"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#1e2029" stroke="#2d3139"/><circle cx="24" cy="24" r="15" fill="none" stroke="#2d3139" stroke-width="3"/><path d="M24 9a15 15 0 1 1-13.5 8.5" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round"/><circle cx="10.5" cy="17.5" r="2.6" fill="#f59e0b"/><path d="M20 17.5v13l11-6.5z" fill="#fff"/></svg><span>Ani<b>Tracker</b></span></a>
   <div class="hbtns">
     <button class="btn" id="adminBtn">🛠 پنل ادمین</button>
     <details class="menu">
