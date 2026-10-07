@@ -81,6 +81,18 @@ h2{border-right:4px solid var(--accent);padding-right:12px;margin-bottom:20px;fo
 header{padding-top:max(15px,env(safe-area-inset-top))}
 @media(max-width:700px){header{padding:12px 14px;flex-wrap:wrap;gap:10px}.logo{font-size:1.2rem}.container{margin:16px auto;padding:0 12px}.grid{grid-template-columns:repeat(2,1fr);gap:12px}.admin{padding:14px}.form input,.form select,.form button{flex:1 1 100%;min-height:44px}.btn,.tab,.state{min-height:44px}.badge{font-size:.7rem;padding:3px 8px}.title{font-size:.95rem}.timer{font-size:.8rem}.body{padding:10px}.actions{padding:0 10px 10px}.modal{padding:12px}.res{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:360px){.grid{grid-template-columns:1fr}}
+.btn[hidden]{display:none}
+.seg{display:flex;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:4px;margin-bottom:16px}
+.seg button{flex:1;background:transparent;border:0;color:var(--muted);padding:9px;border-radius:7px;cursor:pointer;font-weight:bold}
+.seg button.on{background:var(--accent);color:#fff}
+.hint{color:var(--muted);font-size:.85rem;margin:12px 0 0}
+#admin .box{max-width:640px}
+#admin .res{margin:12px 0}
+#manBtn,#mAdd{width:100%}
+.more{margin:14px 0;border:1px dashed var(--line);border-radius:8px;padding:10px 12px}
+.more summary{cursor:pointer;color:var(--muted);font-size:.85rem}
+.more .fgrid{margin-top:12px}
+@media(max-width:700px){#admin{align-items:flex-end;padding:0}#admin .box{border-radius:16px 16px 0 0;max-height:92vh;overflow:auto}}
 </style>
 </head>
 <body>
@@ -114,23 +126,20 @@ header{padding-top:max(15px,env(safe-area-inset-top))}
 </div>
 
 <div class="modal" id="admin" hidden>
-  <div class="box">
-    <div class="mhead"><strong>🛠 پنل ادمین</strong><button class="btn ghost" id="adClose" style="padding:6px 14px">بستن</button></div>
-    <div class="admin">
-    <h3>🔎 جستجو و افزودن (انیمه، سریال، فیلم)</h3>
-    <div class="form">
-      <input type="text" id="nameIn" placeholder="نام به انگلیسی، مثلا: Naruto یا Breaking Bad یا Inception">
-      <select id="dayIn">
-        <option value="saturday">شنبه</option><option value="sunday">یکشنبه</option>
-        <option value="monday">دوشنبه</option><option value="tuesday">سه‌شنبه</option>
-        <option value="wednesday">چهارشنبه</option><option value="thursday">پنجشنبه</option>
-        <option value="friday">جمعه</option>
-      </select>
-      <button id="addBtn">جستجو</button>
-    </div>
-  </div>
-    <div class="admin">
-      <h3>✍️ افزودن دستی فیلم / سریال</h3>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="adTitle">
+    <div class="mhead"><strong id="adTitle">🛠 افزودن به لیست</strong><button class="btn ghost" id="adClose" aria-label="بستن" style="padding:6px 14px">✕</button></div>
+    <div class="seg"><button class="on" data-p="auto">🔎 جستجوی خودکار</button><button data-p="man">✍️ افزودن دستی</button></div>
+    <section id="pAuto">
+      <div class="form">
+        <input type="search" id="nameIn" placeholder="نام انگلیسی: Naruto ، Inception 2 ..." autocomplete="off">
+        <select id="dayIn" aria-label="روز پخش"><option value="auto">روز: خودکار</option><option value="saturday">شنبه</option><option value="sunday">یکشنبه</option><option value="monday">دوشنبه</option><option value="tuesday">سه‌شنبه</option><option value="wednesday">چهارشنبه</option><option value="thursday">پنجشنبه</option><option value="friday">جمعه</option></select>
+        <button id="addBtn">جستجو</button>
+      </div>
+      <p class="hint" id="resHint">نام را بنویس و Enter بزن؛ نتیجه‌ها همین‌جا و به‌محض رسیدن نمایش داده می‌شوند.</p>
+      <div class="res" id="res"></div>
+      <button class="btn ghost" id="manBtn" hidden>پیدا نشد؟ افزودن دستی با همین نام</button>
+    </section>
+    <section id="pMan" hidden>
       <div class="fgrid">
         <label class="fld">نوع<select id="mType"><option value="movie">فیلم</option><option value="show">سریال</option><option value="anime">انیمه</option></select></label>
         <label class="fld">نام (انگلیسی)<input id="mName" placeholder="Stranglehold"></label>
@@ -138,34 +147,27 @@ header{padding-top:max(15px,env(safe-area-inset-top))}
         <label class="fld" data-s hidden>روز پخش<select id="mDay"></select></label>
         <label class="fld" data-s hidden>شماره قسمت<input id="mEp" type="number" min="1" value="1"></label>
         <label class="fld wide">لینک صفحه‌ی زرفیلم (اختیاری؛ نام و سال را خودش پر می‌کند)<input id="mZar" placeholder="https://zarfilm.com/stranglehold-2026/"></label>
-        <label class="fld wide">لینک عکس (اختیاری؛ خالی بماند خودش پیدا می‌کند)<input id="mImg"></label>
-        <label class="fld wide">لینک دانلود (اختیاری)<input id="mLink"></label>
       </div>
-      <button class="btn" id="mAdd" style="margin-top:14px">ذخیره</button>
-    </div>
+      <details class="more"><summary>گزینه‌های بیشتر (عکس و لینک دانلود)</summary>
+        <div class="fgrid">
+          <label class="fld wide">لینک عکس (خالی بماند خودش پیدا می‌کند)<input id="mImg"></label>
+          <label class="fld wide">لینک دانلود<input id="mLink"></label>
+        </div>
+      </details>
+      <button class="btn" id="mAdd">ذخیره</button>
+    </section>
   </div>
 </div>
 <div class="toast" id="toast" hidden></div>
-
-<div class="modal" id="modal" hidden>
-  <div class="box">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <strong id="mTitle">نتایج جستجو</strong>
-      <button class="btn ghost" id="mClose" style="padding:6px 14px">بستن</button>
-    </div>
-    <div class="res" id="res"></div>
-    <div class="form">
-      <input type="text" id="manImg" placeholder="یا لینک عکس دلخواه (اختیاری)">
-      <button id="manBtn">افزودن دستی با همین نام</button>
-    </div>
-  </div>
-</div>
 
 <script>
 const DAYS=[['all','همه'],['saturday','شنبه'],['sunday','یکشنبه'],['monday','دوشنبه'],['tuesday','سه‌شنبه'],['wednesday','چهارشنبه'],['thursday','پنجشنبه'],['friday','جمعه'],['movie','🎬 فیلم‌ها']];
 const JS_DAY={sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
 const TYPE_FA={anime:'انیمه',show:'سریال',movie:'فیلم'};
 const KEY='anitracker_v2';
+const DOPT=DAYS.slice(1,8).map(([k,l])=>'<option value="'+k+'">'+l+'</option>').join('');
+const FMT=new Intl.DateTimeFormat('fa-IR',{weekday:'long',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+let TM=[];
 const PH='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450"><rect width="100%" height="100%" fill="#1e2029"/><text x="50%" y="50%" fill="#6b7280" font-size="20" text-anchor="middle" font-family="Arial">No Image</text></svg>');
 const $=id=>document.getElementById(id);
 const toFa=n=>String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -180,7 +182,9 @@ function load(){
   ];
 }
 let list=load(),filter='all',pending=null;
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(list))}catch(e){}};
+let svT;const flush=()=>{clearTimeout(svT);try{localStorage.setItem(KEY,JSON.stringify(list))}catch(e){}};
+const save=()=>{clearTimeout(svT);svT=setTimeout(flush,300)};
+addEventListener('pagehide',flush);document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
 // تاریخ‌های خیلی دور (مثلاً ۵۵ روز) برای سریال هفتگی غلط‌اند؛ به نزدیک‌ترین روز هفته برمی‌گردند
 const dayKey=ms=>['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][new Date(ms).getDay()];
 function fixTarget(it){
@@ -216,24 +220,24 @@ function nextFromDay(k){
 }
 
 /* ---- منابع جستجو ---- */
-const getJSON=async u=>{const r=await fetch(u);if(!r.ok)throw 0;return r.json()};
+const getJSON=async(u,ms=5000,sg)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);if(sg)sg.addEventListener('abort',()=>c.abort(),{once:true});try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw 0;return await r.json()}finally{clearTimeout(t)}};
 
-async function sMAL(q){
-  const j=await getJSON('https://api.jikan.moe/v4/anime?limit=5&sfw=true&q='+encodeURIComponent(q));
+async function sMAL(q,sg){
+  const j=await getJSON('https://api.jikan.moe/v4/anime?limit=5&sfw=true&q='+encodeURIComponent(q),6000,sg);
   return j.data.map(a=>{const im=a.images.webp||a.images.jpg;return{
     src:'MyAnimeList',type:'anime',status:a.status,title:a.title,year:a.year||'',
     image:im.large_image_url||im.image_url,
     target:nextFromBroadcast(a.broadcast&&a.broadcast.day,a.broadcast&&a.broadcast.time)}});
 }
-async function sIMDB(q){
+async function sIMDB(q,sg){
   const c=(q.trim()[0]||'x').toLowerCase();
   const k=/[a-z0-9]/.test(c)?c:'x';
-  const j=await getJSON('https://v2.sg.media-imdb.com/suggestion/'+k+'/'+encodeURIComponent(q.trim())+'.json');
+  const j=await getJSON('https://v2.sg.media-imdb.com/suggestion/'+k+'/'+encodeURIComponent(q.trim())+'.json',4000,sg);
   return (j.d||[]).filter(x=>x.i&&x.l&&x.id&&x.id.startsWith('tt')).slice(0,6).map(x=>({
     src:'IMDb',type:/series|episode/i.test(x.q||'')?'show':'movie',title:x.l,year:x.y||'',image:x.i.imageUrl,target:0}));
 }
-async function sTV(q){
-  const j=await getJSON('https://api.tvmaze.com/search/shows?q='+encodeURIComponent(q));
+async function sTV(q,sg){
+  const j=await getJSON('https://api.tvmaze.com/search/shows?q='+encodeURIComponent(q),4000,sg);
   return j.slice(0,5).map(x=>({
     src:'TVmaze',type:'show',title:x.show.name,year:(x.show.premiered||'').slice(0,4),
     image:x.show.image&&(x.show.image.original||x.show.image.medium)||'',target:0,tvid:x.show.id}));
@@ -247,20 +251,23 @@ async function searchAll(q){
 async function cacheImg(url){
   if(!url||url.startsWith('data:'))return url;
   try{
-    const b=await (await fetch(url)).blob();
+    const b=await (await fetch(url,{signal:AbortSignal.timeout(8000)})).blob();
     const bm=await createImageBitmap(b);
-    const w=320,h=Math.round(bm.height*w/bm.width);
+    const w=240,h=Math.round(bm.height*w/bm.width);
     const cv=document.createElement('canvas');cv.width=w;cv.height=h;
     cv.getContext('2d').drawImage(bm,0,0,w,h);
-    return cv.toDataURL('image/jpeg',.8);
+    return cv.toDataURL('image/jpeg',.7);
   }catch(e){return url}
 }
 
 /* ---- افزودن ---- */
-async function addFrom(p,manualImg){
-  const day=$('dayIn').value;
+async function addFrom(p,manualImg,done){
+  let day=$('dayIn').value;if(day==='auto')day='saturday';
   const it={id:uid(),name:p.title,day,type:p.type||'anime',year:p.year||'',episode:1,
     image:manualImg||p.image||'',target:p.target||0,link:'',state:'watching',finished:p.status==='Finished Airing',upcoming:p.status==='Not yet aired'};
+  if(!p.tvid&&it.type!=='movie'&&!it.target){
+    try{const r=(await sTV(p.title)).find(x=>x.title.toLowerCase()===p.title.toLowerCase());if(r)p.tvid=r.tvid}catch(e){}
+  }
   if(p.tvid){
     try{
       const j=await getJSON('https://api.tvmaze.com/shows/'+p.tvid+'?embed=nextepisode');
@@ -270,50 +277,64 @@ async function addFrom(p,manualImg){
   }
   fixTarget(it);
   if(!it.guess&&it.type!=='movie'&&it.target)it.day=dayKey(it.target); // روز تب = روز واقعی پخش به وقت خودت
-  list.push(it);save();render();
+  list.push(it);save();render();done&&done(it);
   const cached=await cacheImg(it.image);
   if(cached!==it.image){it.image=cached;save();render();}
 }
-function openModal(items,name){
-  pending=name;const res=$('res');res.textContent='';
-  $('mTitle').textContent=items.length?'نتایج «'+name+'» را انتخاب کنید':'چیزی پیدا نشد (شاید اینترنت یا VPN). می‌توانید دستی اضافه کنید.';
+const lbl=p=>TYPE_FA[p.type]+(p.year?' • '+p.year:'')+' • '+p.src+(p.status?' • '+({'Currently Airing':'در حال پخش','Finished Airing':'تمام‌شده','Not yet aired':'به‌زودی'}[p.status]||p.status):'')+(p.type==='movie'||p.status==='Finished Airing'?'':p.target?' • ⏰ '+FMT.format(p.target):p.src==='IMDb'?' • زمان پخش بعد از افزودن پیدا می‌شود':' • زمان پخش نامشخص');
+function addResults(items){
+  const f=document.createDocumentFragment();
   items.forEach(p=>{
     const b=document.createElement('button');b.className='r';
-    const im=document.createElement('img');im.referrerPolicy='no-referrer';im.loading='lazy';
+    const im=document.createElement('img');im.referrerPolicy='no-referrer';im.loading='lazy';im.decoding='async';
     im.onerror=()=>{im.onerror=null;im.src=PH};im.src=p.image||PH;
-    const d=document.createElement('div');
-    d.textContent=p.title;
-    const s=document.createElement('small');
-    s.textContent=TYPE_FA[p.type]+(p.year?' • '+p.year:'')+' • '+p.src+(p.status?' • '+({'Currently Airing':'در حال پخش','Finished Airing':'تمام‌شده','Not yet aired':'به‌زودی'}[p.status]||p.status):'');
-    d.appendChild(s);b.append(im,d);
-    b.onclick=()=>{$('modal').hidden=true;$('admin').hidden=true;addFrom(p);toast('«'+p.title+'» اضافه شد')};
-    res.appendChild(b);
+    const d=document.createElement('div');d.textContent=p.title;
+    const sm=document.createElement('small');
+    sm.textContent=lbl(p);
+    d.appendChild(sm);b.append(im,d);
+    b.onclick=()=>{$('admin').hidden=true;addFrom(p,'',it=>toast('«'+p.title+'» اضافه شد'+(it.type==='movie'?'':it.guess?' — زمان پخش پیدا نشد، تخمینی است':' — پخش: '+FMT.format(it.target))))};
+    if(p.tvid)getJSON('https://api.tvmaze.com/shows/'+p.tvid+'?embed=nextepisode',4000).then(j=>{const e=j._embedded&&j._embedded.nextepisode;if(e){p.target=new Date(e.airstamp).getTime();sm.textContent=lbl(p)}}).catch(()=>{});
+    f.appendChild(b);
   });
-  $('modal').hidden=false;
+  $('res').appendChild(f);
 }
-$('addBtn').onclick=async function(){
-  const name=$('nameIn').value.trim();
-  if(!name){alert('لطفاً نام را وارد کنید.');return}
-  this.disabled=true;this.textContent='در حال جستجو...';
-  try{openModal(await searchAll(name),name)}finally{this.disabled=false;this.textContent='جستجو'}
-  $('nameIn').value='';
-};
-$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('addBtn').click()});
-$('mClose').onclick=()=>$('modal').hidden=true;
-$('manBtn').onclick=()=>{
-  $('modal').hidden=true;
-  addFrom({title:pending,type:'anime'},$('manImg').value.trim());$('manImg').value='';
-};
+/* جستجوی همزمان؛ هر منبع به‌محض رسیدن نشان داده می‌شود، timeout دارد و نتیجه کش می‌شود */
+const SC=new Map();let sCtl,sid=0;
+function searchProg(q,on){
+  const k=q.toLowerCase();
+  if(SC.has(k)){on(SC.get(k));return Promise.resolve()}
+  if(sCtl)sCtl.abort();sCtl=new AbortController();const sg=sCtl.signal,all=[];
+  return Promise.allSettled([sIMDB(q,sg),sTV(q,sg),sMAL(q,sg)].map(p=>p.then(r=>{if(sg.aborted)return;all.push(...r);if(r.length)on(r)}))).then(()=>{if(!sg.aborted&&all.length)SC.set(k,all)});
+}
+async function doSearch(){
+  const name=$('nameIn').value.trim(),my=++sid,hint=$('resHint');
+  if(!name){$('nameIn').focus();return}
+  $('res').textContent='';$('manBtn').hidden=true;hint.textContent='⏳ در حال جستجو...';
+  let n=0;
+  await searchProg(name,r=>{if(my!==sid)return;n+=r.length;addResults(r);hint.textContent='⏳ می‌توانی همین حالا انتخاب کنی؛ منابع دیگر هنوز در راه‌اند...'});
+  if(my!==sid)return;
+  hint.textContent=n?'نتیجه‌ی مورد نظر را انتخاب کن.':'چیزی پیدا نشد (شاید اینترنت یا VPN). می‌توانی دستی اضافه کنی.';
+  $('manBtn').hidden=false;
+}
+$('addBtn').onclick=doSearch;
+$('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch()});
+function pane(p){
+  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  $('pAuto').hidden=p!=='auto';$('pMan').hidden=p!=='man';
+  setTimeout(()=>$(p==='auto'?'nameIn':'mName').focus(),0);
+}
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>pane(b.dataset.p));
+$('manBtn').onclick=()=>{$('mName').value=$('nameIn').value.trim();pane('man')};
 
 /* ---- عکس‌های خالی را خودکار پر کن ---- */
 async function fillMissing(){
   for(const it of list){
-    if(it.image)continue;
+    if(it.image||it.imgTried)continue;it.imgTried=true;
     const r=(await searchAll(it.name)).find(x=>x.image);
     if(r){it.image=await cacheImg(r.image);if(!it.target)it.target=r.target||nextFromDay(it.day);save();render()}
     await new Promise(s=>setTimeout(s,500));
   }
-  let ch=false;list.forEach(i=>{if(!i.target&&i.type!=='movie'){i.target=nextFromDay(i.day);ch=true}});
+  save();let ch=false;list.forEach(i=>{if(!i.target&&i.type!=='movie'){i.target=nextFromDay(i.day);ch=true}});
   if(ch){save();render()}
 }
 
@@ -336,7 +357,7 @@ function dlLink(it){
 
 /* ---- رندر ---- */
 function render(){
-  const grid=$('grid');grid.textContent='';
+  const grid=$('grid');grid.textContent='';TM=[];
   const q=$('q').value.trim().toLowerCase(),st=$('stF').value,so=$('sortF').value;
   const items=list.filter(i=>(filter==='all'||(filter==='movie'?i.type==='movie':i.type!=='movie'&&i.day===filter))&&(!q||i.name.toLowerCase().includes(q))&&(st==='all'||(i.state||'watching')===st));
   if(so==='time')items.sort((a,b)=>(a.target||9e15)-(b.target||9e15));
@@ -346,27 +367,28 @@ function render(){
     p.textContent='چیزی برای این روز ثبت نشده. از بالا جستجو و اضافه کنید.';
     grid.appendChild(p);return;
   }
+  const fr=document.createDocumentFragment();
   items.forEach(it=>{
     const movie=it.type==='movie';
     const c=document.createElement('div');c.className='card';
     c.innerHTML=`
       <div class="img"><span class="badge"></span>
         <button class="del" title="حذف" aria-label="حذف">✕</button>
-        <img loading="lazy" referrerpolicy="no-referrer" alt=""></div>
+        <img loading="lazy" decoding="async" referrerpolicy="no-referrer" alt=""></div>
       <div class="body"><h3 class="title"></h3><div class="meta"></div>
         <div class="timer" data-id="${it.id}"></div><div class="meta when"></div></div>
       <div class="actions">
         <a class="btn dl" target="_blank" rel="noopener"></a>
         <a class="btn ghost srch" target="_blank" rel="noopener">🔎 پیدا نشد؟ جستجو در زرفیلم</a>
         <button class="btn ok next" hidden>✔ دانلود شد، قسمت بعدی</button>
-        <div class="row"><button class="btn ghost setlink">✏️ لینک</button><button class="btn ghost setimg">🖼 عکس</button><button class="btn ghost settime">⏰ زمان</button></div><select class="dayS">${DAYS.slice(1,8).map(([k,l])=>'<option value="'+k+'">'+l+'</option>').join('')}</select><select class="state"><option value="watching">در حال دیدن</option><option value="later">بعداً</option><option value="done">دیده شده</option></select>
+        <div class="row"><button class="btn ghost setlink">✏️ لینک</button><button class="btn ghost setimg">🖼 عکس</button><button class="btn ghost settime">⏰ زمان</button></div><select class="dayS">${DOPT}</select><select class="state"><option value="watching">در حال دیدن</option><option value="later">بعداً</option><option value="done">دیده شده</option></select>
         
       </div>`;
     c.querySelector('.badge').textContent=movie?'فیلم':'قسمت '+toFa(it.episode);
     const t=c.querySelector('.title');t.textContent=it.name;t.title=it.name;
     c.querySelector('.meta').textContent=(TYPE_FA[it.type]||'')+(it.year?' • '+it.year:'');
     c.querySelector('.dl').textContent=movie?'⬇ دانلود فیلم':'⬇ دانلود قسمت جدید';
-    if(movie)c.querySelector('.timer').remove();
+    if(movie)c.querySelector('.timer').remove();else TM.push({it,el:c.querySelector('.timer'),nb:c.querySelector('.next'),w:c.querySelector('.when')});
     const box=c.querySelector('.img'),img=c.querySelector('img');
     img.alt=it.name;
     img.onload=()=>box.classList.add('loaded');
@@ -397,27 +419,30 @@ function render(){
       const v=prompt('لینک عکس را وارد کنید:',it.image&&!it.image.startsWith('data:')?it.image:'');
       if(v){it.image=v.trim();save();render();const d=await cacheImg(it.image);if(d!==it.image){it.image=d;save();render()}}
     };
-    grid.appendChild(c);
+    fr.appendChild(c);
   });
-  updateTimers();
+  grid.appendChild(fr);
+  updateTimers(true);
 }
-function updateTimers(){
-  document.querySelectorAll('.timer').forEach(el=>{
-    const it=list.find(x=>x.id===el.dataset.id);if(!it)return;
-    const nb=el.closest('.card').querySelector('.next');
-    const w=el.parentNode.querySelector('.when');
-    if(w)w.textContent=it.target&&!it.finished?'پخش: '+new Date(it.target+delayMs()).toLocaleString('fa-IR',{weekday:'long',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
-    if(it.finished){el.textContent='پایان یافته ✔';el.classList.add('out');nb.hidden=true;return}
-    if(!it.target){el.textContent='در حال دریافت زمان پخش...';return}
-    const diff=it.target+delayMs()-Date.now();
-    if(diff<=0){el.textContent='منتشر شد! ✅';el.classList.add('out');nb.hidden=false;notify(it)}
+function updateTimers(first){
+  if(document.hidden&&!first)return;
+  const dl=delayMs(),now=Date.now(),p=n=>toFa(String(n).padStart(2,'0'));
+  TM.forEach(o=>{
+    const it=o.it;let t,out=false,nx=false;
+    if(it.finished){t='پایان یافته ✔';out=true}
+    else if(!it.target)t='در حال دریافت زمان پخش...';
     else{
-      el.classList.remove('out');nb.hidden=true;
-      const p=n=>toFa(String(n).padStart(2,'0'));
-      el.textContent='⏳ '+toFa(Math.floor(diff/864e5))+' روز و '+p(Math.floor(diff%864e5/36e5))+':'+p(Math.floor(diff%36e5/6e4))+':'+p(Math.floor(diff%6e4/1e3))+(it.guess?' (تخمینی)':'');
+      const d=it.target+dl-now;
+      if(d<=0){t='منتشر شد! ✅';out=true;nx=true;notify(it)}
+      else t='⏳ '+toFa(Math.floor(d/864e5))+' روز و '+p(Math.floor(d%864e5/36e5))+':'+p(Math.floor(d%36e5/6e4))+':'+p(Math.floor(d%6e4/1e3))+(it.guess?' (تخمینی)':'');
     }
+    if(o.t!==t){o.t=t;o.el.textContent=t}
+    if(o.out!==out){o.out=out;o.el.classList.toggle('out',out)}
+    if(o.nx!==nx){o.nx=nx;o.nb.hidden=!nx}
+    if(first)o.w.textContent=it.target&&!it.finished?'پخش: '+FMT.format(it.target+dl):'';
   });
 }
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateTimers()});
 
 DAYS.forEach(([k,l])=>{
   const b=document.createElement('button');
@@ -427,7 +452,7 @@ DAYS.forEach(([k,l])=>{
 });
 $('tplBtn').onclick=()=>{
   let cur='';try{cur=localStorage.getItem('anitracker_tpl')||''}catch(e){}
-  const v=prompt('آدرس جستجوی سایت دانلود مورد نظرت را وارد کن.\nاز {name} برای نام، {ep} برای شماره قسمت و {year} برای سال استفاده کن.\nمثال: https://example.com/search?q={name}\nاگر فقط آدرس اصلی سایت را بدهی (مثل https://zarfilm.com/) خودش جستجو را می‌سازد. پیش‌فرض: زرفیلم.',cur);
+  let v=prompt('آدرس جستجوی سایت دانلود مورد نظرت را وارد کن.\nاز {name} برای نام، {ep} برای شماره قسمت و {year} برای سال استفاده کن.\nمثال: https://example.com/search?q={name}\nاگر فقط آدرس اصلی سایت را بدهی (مثل https://zarfilm.com/) خودش جستجو را می‌سازد. پیش‌فرض: زرفیلم.',cur);
   if(v===null)return;
   v=v.trim();
   if(v&&!v.includes('{')){
@@ -436,7 +461,7 @@ $('tplBtn').onclick=()=>{
   try{localStorage.setItem('anitracker_tpl',v)}catch(e){}
   render();
 };
-function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2500)}
+function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,4500)}
 function parseZar(u){
   try{
     const x=new URL(u);if(!/(^|\.)zarfilm\.com$/i.test(x.hostname))return null;
@@ -456,8 +481,11 @@ $('mZar').onchange=()=>{
   const r=parseZar($('mZar').value.trim());if(!r){toast('این لینک زرفیلم نیست');return}
   $('mType').value=r.type;syncType();$('mName').value=r.name;$('mYear').value=r.year;$('mLink').value=r.link;
 };
-$('adminBtn').onclick=()=>$('admin').hidden=false;
-$('adClose').onclick=()=>$('admin').hidden=true;
+$('adminBtn').onclick=()=>{$('admin').hidden=false;pane('auto')};
+const adOff=()=>$('admin').hidden=true;
+$('adClose').onclick=adOff;
+$('admin').addEventListener('mousedown',e=>{if(e.target===$('admin'))adOff()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')adOff()});
 document.addEventListener('click',e=>{const d=document.querySelector('.menu');if(d&&!d.contains(e.target))d.open=false});
 $('mAdd').onclick=async()=>{
   const name=$('mName').value.trim();if(!name){toast('نام را وارد کنید');return}
@@ -476,7 +504,7 @@ $('mAdd').onclick=async()=>{
   }
   if(it.image){it.image=await cacheImg(it.image);save();render()}
 };
-['q','stF','sortF'].forEach(id=>$(id).addEventListener('input',render));
+let rt;const rr=()=>{clearTimeout(rt);rt=setTimeout(render,120)};['q','stF','sortF'].forEach(id=>$(id).addEventListener('input',rr));
 $('delayBtn').onclick=()=>{
   let cur='';try{cur=localStorage.getItem('anitracker_delay')||''}catch(e){}
   const v=prompt('چند ساعت بعد از پخش اصلی، قسمت در سایت دانلود آپلود می‌شود؟ (مثلاً 24). صفر یعنی بدون تأخیر.',cur||'0');
@@ -502,7 +530,7 @@ $('impIn').onchange=async e=>{
   }catch(x){alert('فایل بکاپ معتبر نیست.')}
   e.target.value='';
 };
-render();setInterval(updateTimers,1000);fillMissing();
+render();setInterval(updateTimers,1000);setTimeout(fillMissing,1500);
 </script>
 </body>
 </html>
