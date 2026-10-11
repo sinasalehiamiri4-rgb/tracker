@@ -107,6 +107,80 @@ input,select{font-size:16px!important}
 .res{grid-template-columns:repeat(2,1fr)}
 }
 button,summary,.btn{touch-action:manipulation}
+
+/* ---- پنل ادمین پیشرفته ---- */
+#admin{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#admin .box{max-width:720px;background:linear-gradient(180deg,#1c1e29,#15171e);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.65);animation:pop .22s ease}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}}
+@media (prefers-reduced-motion:reduce){#admin .box{animation:none}}
+#admin .mhead strong{font-size:1.2rem;background:linear-gradient(90deg,#a5b4fc,#6366f1);-webkit-background-clip:text;background-clip:text;color:transparent}
+#admin input:focus,#admin select:focus,#admin textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,102,241,.25)}
+#admin .seg{overflow-x:auto}
+#admin .seg button{white-space:nowrap;transition:background .15s}
+#admin .seg button:not(.on):hover{background:#22252f;color:#fff}
+#admin section[hidden]{display:none}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+.chips[hidden]{display:none}
+.chip{background:var(--bg);border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 13px;font-size:.8rem;cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--accent);color:#fff}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip i{font-style:normal;opacity:.85;margin-right:2px}
+.chip.x{border-style:dashed}
+.src{font-size:.72rem;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.src.load{animation:pulse 1s infinite alternate}
+.src.ok{color:var(--ok);border-color:rgba(16,185,129,.4)}
+.src.err{color:#f87171;border-color:rgba(248,113,113,.4)}
+@keyframes pulse{to{opacity:.4}}
+.qk{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.8rem;margin-top:12px;cursor:pointer}
+.r{position:relative;transition:transform .15s,border-color .15s,box-shadow .15s}
+.r:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.r[hidden]{display:none}
+.r .tp{position:absolute;top:6px;left:6px;color:#fff;font-size:.68rem;font-weight:bold;padding:2px 8px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.r .inl{position:absolute;top:6px;right:6px;background:var(--ok);color:#fff;font-size:.65rem;padding:2px 7px;border-radius:999px}
+.r.sk{aspect-ratio:2/3.5;border:0;cursor:default;background:linear-gradient(110deg,#181a22 30%,#242733 50%,#181a22 70%);background-size:200% 100%;animation:sk 1.4s linear infinite}
+.sheet{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}
+.sheet img{width:120px;aspect-ratio:2/3;object-fit:cover;border-radius:10px;background:#111;flex:none;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.sheet h3{margin:0 0 6px;font-size:1.15rem;color:#fff}
+.dupw{color:var(--warn);font-size:.85rem;margin:8px 0 0}
+.dupw[hidden]{display:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+#admin textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:#fff;padding:10px 12px;border-radius:10px;font-family:inherit;resize:vertical}
+.log{margin-top:10px;max-height:220px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.82rem;display:grid;gap:4px}
+.log:empty{display:none}
+.log .ok{color:var(--ok)}.log .warn{color:var(--warn)}.log .dim{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.st{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:4px}
+.st b{font-size:1.15rem}.st span{color:var(--muted);font-size:.78rem}
+@media(max-width:700px){.sheet img{width:90px}#admin .seg button{padding:11px 10px}}
+
+/* ---- Hero ---- */
+.hero{--hc:99,102,241;position:relative;border-radius:20px;overflow:hidden;margin-bottom:28px;border:1px solid rgba(var(--hc),.4);background:#12131a;box-shadow:0 20px 50px rgba(var(--hc),.2);transition:box-shadow .4s,border-color .4s}
+.hero[hidden]{display:none}
+.hbg{position:absolute;inset:-30px;background-size:cover;background-position:center;filter:blur(38px) saturate(1.4);opacity:.5;transform:scale(1.1)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,16,21,.85),rgba(15,16,21,.45))}
+.hin,.hnext{position:relative;z-index:1}
+.hin{display:flex;gap:24px;padding:24px;align-items:center}
+.hin>img{width:170px;aspect-ratio:2/3;object-fit:cover;border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.55);flex:none;background:#111}
+.hinfo{flex:1;min-width:0}
+.hk{display:inline-block;background:rgba(var(--hc),.28);border:1px solid rgba(var(--hc),.7);color:#fff;border-radius:999px;padding:4px 12px;font-size:.78rem;font-weight:bold}
+.hero h1{margin:12px 0 6px;font-size:clamp(1.4rem,3.4vw,2.3rem);line-height:1.25;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.hmeta{color:#cbd5e1;font-size:.88rem}
+.hcd{display:flex;gap:10px;margin:18px 0}
+.hcd[hidden],.hout[hidden]{display:none}
+.hcd div{background:rgba(0,0,0,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);border-radius:12px;min-width:68px;padding:10px 6px;text-align:center}
+.hcd b{display:block;font-size:1.6rem;font-variant-numeric:tabular-nums}
+.hcd small{color:#cbd5e1;font-size:.7rem}
+.hout{font-size:1.5rem;font-weight:bold;color:var(--ok);margin:18px 0}
+.hact{display:flex;gap:10px;flex-wrap:wrap}
+.hact .btn{padding:12px 20px;display:inline-block}
+.hact .btn[hidden]{display:none}
+.hnext{display:flex;gap:12px;overflow-x:auto;padding:0 24px 20px}
+.hnext:empty{display:none}
+.mn{display:flex;gap:10px;align-items:center;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px;min-width:200px;flex:none}
+.mn img{width:38px;height:56px;object-fit:cover;border-radius:6px;background:#111}
+.mn b{display:block;font-size:.85rem;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mn small{color:var(--warn);font-size:.75rem}
+@media(max-width:700px){.hin{flex-direction:column;text-align:center;padding:18px}.hin>img{width:130px}.hcd{justify-content:center}.hcd div{min-width:60px}.hact{justify-content:center}.hnext{padding:0 14px 16px}}
 </style>
 </head>
 <body>
@@ -120,6 +194,7 @@ button,summary,.btn{touch-action:manipulation}
         <button class="btn ghost" id="tplBtn">🔗 سایت دانلود</button>
         <button class="btn ghost" id="delayBtn">⏱ تأخیر آپلود</button>
         <button class="btn ghost" id="notifBtn">🔔 اعلان</button>
+        <button class="btn ghost" id="icsBtn">📅 خروجی تقویم (.ics)</button>
         <button class="btn ghost" id="expBtn">💾 خروجی بکاپ</button>
         <button class="btn ghost" id="impBtn">📂 ورود بکاپ</button>
         <input type="file" id="impIn" accept="application/json" hidden>
@@ -129,6 +204,21 @@ button,summary,.btn{touch-action:manipulation}
 </header>
 
 <div class="container">
+<section class="hero" id="hero" hidden>
+    <div class="hbg" id="hBg"></div>
+    <div class="hin">
+      <img id="hImg" alt="">
+      <div class="hinfo">
+        <span class="hk" id="hKick">⏭ پخش بعدی</span>
+        <h1 id="hTitle"></h1>
+        <div class="hmeta" id="hMeta"></div>
+        <div class="hcd" id="hCd"><div><b id="cdD"></b><small>روز</small></div><div><b id="cdH"></b><small>ساعت</small></div><div><b id="cdM"></b><small>دقیقه</small></div><div><b id="cdS"></b><small>ثانیه</small></div></div>
+        <div class="hout" id="hOut" hidden>منتشر شد! ✅</div>
+        <div class="hact"><a class="btn" id="hDl" target="_blank" rel="noopener" hidden>⬇ دانلود قسمت جدید</a><button class="btn ok" id="hNx" hidden>✔ دانلود شد، قسمت بعدی</button></div>
+      </div>
+    </div>
+    <div class="hnext" id="hNext"></div>
+  </section>
     <h2>📅 جدول پخش هفتگی</h2>
   <div class="tabs" id="tabs"></div>
   <div class="bar">
@@ -141,17 +231,21 @@ button,summary,.btn{touch-action:manipulation}
 
 <div class="modal" id="admin" hidden>
   <div class="box" role="dialog" aria-modal="true" aria-labelledby="adTitle">
-    <div class="mhead"><strong id="adTitle">🛠 افزودن به لیست</strong><button class="btn ghost" id="adClose" aria-label="بستن" style="padding:6px 14px">✕</button></div>
-    <div class="seg"><button class="on" data-p="auto">🔎 جستجوی خودکار</button><button data-p="man">✍️ افزودن دستی</button></div>
+    <div class="mhead"><strong id="adTitle">🛠 پنل ادمین</strong><button class="btn ghost" id="adClose" aria-label="بستن" style="padding:6px 14px">✕</button></div>
+    <div class="seg"><button class="on" data-p="auto">🔎 جستجو</button><button data-p="man">✍️ دستی</button><button data-p="bulk">📋 گروهی</button><button data-p="stats">📊 آمار</button></div>
     <section id="pAuto">
       <div class="form">
         <input type="search" id="nameIn" enterkeyhint="search" placeholder="نام انگلیسی: Naruto ، Inception 2 ..." autocomplete="off">
         <select id="dayIn" aria-label="روز پخش"><option value="auto">روز: خودکار</option><option value="saturday">شنبه</option><option value="sunday">یکشنبه</option><option value="monday">دوشنبه</option><option value="tuesday">سه‌شنبه</option><option value="wednesday">چهارشنبه</option><option value="thursday">پنجشنبه</option><option value="friday">جمعه</option></select>
         <button id="addBtn">جستجو</button>
       </div>
+      <div class="chips" id="recent" hidden></div>
+      <div class="chips" id="tf"><button class="chip on" data-t="all">همه <i></i></button><button class="chip" data-t="anime">🎌 انیمه <i></i></button><button class="chip" data-t="show">📺 سریال <i></i></button><button class="chip" data-t="movie">🎬 فیلم <i></i></button></div>
+      <div class="chips" id="srcs" hidden></div>
       <p class="hint" id="resHint">نام را بنویس و Enter بزن؛ نتیجه‌ها همین‌جا و به‌محض رسیدن نمایش داده می‌شوند.</p>
       <div class="res" id="res"></div>
       <button class="btn ghost" id="manBtn" hidden>پیدا نشد؟ افزودن دستی با همین نام</button>
+      <label class="qk"><input type="checkbox" id="quick"> ⚡ افزودن سریع (با کلیک روی نتیجه، بدون صفحه‌ی تأیید)</label>
     </section>
     <section id="pMan" hidden>
       <div class="fgrid">
@@ -169,6 +263,34 @@ button,summary,.btn{touch-action:manipulation}
         </div>
       </details>
       <button class="btn" id="mAdd">ذخیره</button>
+    </section>
+    <section id="pSheet" hidden>
+      <div class="sheet">
+        <img id="shImg" alt="">
+        <div class="shi">
+          <h3 id="shTitle"></h3>
+          <p class="hint" id="shMeta" style="margin-top:0"></p>
+          <p class="dupw" id="shDup" hidden>⚠️ این مورد از قبل در لیست هست.</p>
+        </div>
+      </div>
+      <div class="fgrid">
+        <label class="fld" data-sh>روز پخش<select id="shDay"></select></label>
+        <label class="fld">وضعیت<select id="shState"><option value="watching">در حال دیدن</option><option value="later">بعداً</option><option value="done">دیده شده</option></select></label>
+        <label class="fld" data-sh>شماره قسمت (خالی = خودکار)<input id="shEp" type="number" min="1" placeholder="خودکار"></label>
+        <label class="fld wide">لینک دانلود (اختیاری)<input id="shLink" placeholder="https://..."></label>
+      </div>
+      <div class="two"><button class="btn ghost" id="shBack">→ بازگشت به نتایج</button><button class="btn" id="shAdd">➕ افزودن به لیست</button></div>
+    </section>
+    <section id="pBulk" hidden>
+      <p class="hint" style="margin-top:0">هر نام را (انگلیسی) در یک خط بنویس. برای هرکدام بهترین نتیجه خودکار پیدا و اضافه می‌شود؛ موارد تکراری رد می‌شوند.</p>
+      <textarea id="bulkIn" rows="7" placeholder="Naruto&#10;Inception&#10;Breaking Bad"></textarea>
+      <div class="form" style="margin-top:12px"><select id="bulkType"><option value="auto">نوع: خودکار</option><option value="anime">فقط انیمه</option><option value="show">فقط سریال</option><option value="movie">فقط فیلم</option></select><button id="bulkBtn">▶ شروع افزودن</button></div>
+      <p class="hint" id="bulkProg"></p>
+      <div class="log" id="bulkLog"></div>
+    </section>
+    <section id="pStats" hidden>
+      <div class="stats" id="stats"></div>
+      <div class="two"><button class="btn" id="stRefresh">🔄 به‌روزرسانی زمان پخش همه</button><button class="btn ghost" id="stClean">🧹 حذف «دیده شده»‌ها</button></div>
     </section>
   </div>
 </div>
@@ -256,8 +378,18 @@ async function sTV(q,sg){
     src:'TVmaze',type:'show',title:x.show.name,year:(x.show.premiered||'').slice(0,4),
     image:x.show.image&&(x.show.image.original||x.show.image.medium)||'',target:0,tvid:x.show.id}));
 }
+async function sCine(q,sg){
+  const one=async kind=>{
+    const j=await getJSON('https://v3-cinemeta.strem.io/catalog/'+kind+'/top/search='+encodeURIComponent(q.trim())+'.json',5000,sg);
+    return (j.metas||[]).filter(x=>x.name&&x.poster).slice(0,6).map(x=>({
+      src:'Cinemeta',type:kind==='movie'?'movie':'show',title:x.name,
+      year:String(x.year||x.releaseInfo||'').slice(0,4),image:x.poster,target:0}));
+  };
+  const rs=await Promise.allSettled([one('movie'),one('series')]);
+  return rs.flatMap(r=>r.status==='fulfilled'?r.value:[]);
+}
 async function searchAll(q){
-  const rs=await Promise.allSettled([sMAL(q),sIMDB(q),sTV(q)]);
+  const rs=await Promise.allSettled([sMAL(q),sIMDB(q),sTV(q),sCine(q)]);
   return rs.flatMap(r=>r.status==='fulfilled'?r.value:[]);
 }
 
@@ -275,10 +407,10 @@ async function cacheImg(url){
 }
 
 /* ---- افزودن ---- */
-async function addFrom(p,manualImg,done){
-  let day=$('dayIn').value;if(day==='auto')day='saturday';
+async function addFrom(p,manualImg,done,o={}){
+  let day=o.day||$('dayIn').value;if(day==='auto')day='saturday';
   const it={id:uid(),name:p.title,day,type:p.type||'anime',year:p.year||'',episode:1,
-    image:manualImg||p.image||'',target:p.target||0,link:'',state:'watching',finished:p.status==='Finished Airing',upcoming:p.status==='Not yet aired'};
+    image:manualImg||p.image||'',target:p.target||0,link:'',state:o.state||'watching',finished:p.status==='Finished Airing',upcoming:p.status==='Not yet aired'};
   if(!p.tvid&&it.type!=='movie'&&!it.target){
     try{const r=(await sTV(p.title)).find(x=>x.title.toLowerCase()===p.title.toLowerCase());if(r)p.tvid=r.tvid}catch(e){}
   }
@@ -289,53 +421,116 @@ async function addFrom(p,manualImg,done){
       if(e){it.target=new Date(e.airstamp).getTime();it.episode=e.number||1;it.season=e.season}
     }catch(e){}
   }
+  if(p.tvid)it.tvid=p.tvid;
+  if(o.episode)it.episode=o.episode;
+  if(o.link)it.link=o.link;
   fixTarget(it);
   if(!it.guess&&it.type!=='movie'&&it.target)it.day=dayKey(it.target); // روز تب = روز واقعی پخش به وقت خودت
   list.push(it);save();render();done&&done(it);
   const cached=await cacheImg(it.image);
   if(cached!==it.image){it.image=cached;save();render();}
 }
-const lbl=p=>TYPE_FA[p.type]+(p.year?' • '+p.year:'')+' • '+p.src+(p.status?' • '+({'Currently Airing':'در حال پخش','Finished Airing':'تمام‌شده','Not yet aired':'به‌زودی'}[p.status]||p.status):'')+(p.type==='movie'||p.status==='Finished Airing'?'':p.target?' • ⏰ '+FMT.format(p.target):p.src==='IMDb'?' • زمان پخش بعد از افزودن پیدا می‌شود':' • زمان پخش نامشخص');
+/* ---- پیدا کردن خودکار زمان پخش (بدون وارد کردن دستی) ---- */
+const nz=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+const pickM=(arr,name)=>{const n=nz(name);if(!n)return null;return arr.find(x=>nz(x.title)===n)||arr.find(x=>{const t=nz(x.title);return t&&(t.includes(n)||n.includes(t))})||null};
+async function findTime(it){
+  let t=0;
+  try{
+    if(!it.tvid){const r=pickM(await sTV(it.name),it.name);if(r)it.tvid=r.tvid}
+    if(it.tvid){
+      const j=await getJSON('https://api.tvmaze.com/shows/'+it.tvid+'?embed=nextepisode');
+      const e=j._embedded&&j._embedded.nextepisode;
+      if(e)t=new Date(e.airstamp).getTime();
+    }
+  }catch(e){}
+  if(!t&&it.type==='anime'){
+    try{const r=pickM((await sMAL(it.name)).filter(x=>x.target),it.name);if(r)t=r.target}catch(e){}
+  }
+  return t;
+}
+async function autoTime(it){
+  if(it.type==='movie'||it.finished)return false;
+  const t=await findTime(it);
+  if(!t||t<=Date.now())return false;
+  if(t!==it.target)it.notified=false;
+  it.target=t;it.guess=false;it.upcoming=t-Date.now()>10*864e5;it.day=dayKey(t);
+  save();render();return true;
+}
+async function autoRun(){
+  for(const it of list.slice()){
+    if(it.type==='movie'||it.finished||it.state==='done')continue;
+    if(it.guess||!it.target){await autoTime(it);await new Promise(r=>setTimeout(r,400))}
+  }
+}
+const lbl=p=>TYPE_FA[p.type]+(p.year?' • '+p.year:'')+' • '+p.src+(p.status?' • '+({'Currently Airing':'در حال پخش','Finished Airing':'تمام‌شده','Not yet aired':'به‌زودی'}[p.status]||p.status):'')+(p.type==='movie'||p.status==='Finished Airing'?'':p.target?' • ⏰ '+FMT.format(p.target):(p.src==='IMDb'||p.src==='Cinemeta')?' • زمان پخش بعد از افزودن پیدا می‌شود':' • زمان پخش نامشخص');
+const RANK={MyAnimeList:3,TVmaze:2};let seenR=new Map();
+const TCOL={anime:'#ec4899',show:'#3b82f6',movie:'#f59e0b'};
+const addMsg=p=>it=>toast('«'+p.title+'» اضافه شد'+(it.type==='movie'?'':it.guess?' — زمان پخش پیدا نشد، تخمینی است':' — پخش: '+FMT.format(it.target)));
 function addResults(items){
+  $('res').querySelectorAll('.sk').forEach(e=>e.remove());
   const f=document.createDocumentFragment();
   items.forEach(p=>{
-    const b=document.createElement('button');b.className='r';
+    const k=nz(p.title),old=seenR.get(k);
+    if(old&&(!old.p.year||!p.year||String(old.p.year)===String(p.year))){
+      if((RANK[p.src]||0)<=(RANK[old.p.src]||0))return;
+      old.b.remove();
+    }
+    const b=document.createElement('button');b.className='r';b.dataset.t=p.type;
     const im=document.createElement('img');im.referrerPolicy='no-referrer';im.loading='lazy';im.decoding='async';
     im.onerror=()=>{im.onerror=null;im.src=PH};im.src=p.image||PH;
     const d=document.createElement('div');d.textContent=p.title;
     const sm=document.createElement('small');
     sm.textContent=lbl(p);
-    d.appendChild(sm);b.append(im,d);
-    b.onclick=()=>{$('admin').hidden=true;addFrom(p,'',it=>toast('«'+p.title+'» اضافه شد'+(it.type==='movie'?'':it.guess?' — زمان پخش پیدا نشد، تخمینی است':' — پخش: '+FMT.format(it.target))))};
+    d.appendChild(sm);
+    const tp=document.createElement('span');tp.className='tp';tp.style.background=TCOL[p.type]||'#6366f1';tp.textContent=TYPE_FA[p.type]||'';
+    b.append(im,d,tp);
+    if(list.some(x=>nz(x.name)===k)){const v=document.createElement('span');v.className='inl';v.textContent='✓ در لیست';b.appendChild(v)}
+    seenR.set(k,{b,p});
+    b.onclick=()=>{
+      if(LS('anitracker_quick')==='1'){$('admin').hidden=true;addFrom(p,'',addMsg(p))}
+      else openSheet(p);
+    };
     if(p.tvid)getJSON('https://api.tvmaze.com/shows/'+p.tvid+'?embed=nextepisode',4000).then(j=>{const e=j._embedded&&j._embedded.nextepisode;if(e){p.target=new Date(e.airstamp).getTime();sm.textContent=lbl(p)}}).catch(()=>{});
     f.appendChild(b);
   });
   $('res').appendChild(f);
+  applyTf();
 }
 /* جستجوی همزمان؛ هر منبع به‌محض رسیدن نشان داده می‌شود، timeout دارد و نتیجه کش می‌شود */
 const SC=new Map();let sCtl,sid=0;
-function searchProg(q,on){
+function searchProg(q,on,st){
   const k=q.toLowerCase();
   if(SC.has(k)){on(SC.get(k));return Promise.resolve()}
   if(sCtl)sCtl.abort();sCtl=new AbortController();const sg=sCtl.signal,all=[];
-  return Promise.allSettled([sIMDB(q,sg),sTV(q,sg),sMAL(q,sg)].map(p=>p.then(r=>{if(sg.aborted)return;all.push(...r);if(r.length)on(r)}))).then(()=>{if(!sg.aborted&&all.length)SC.set(k,all)});
+  const S=[['IMDb',sIMDB],['TVmaze',sTV],['Cinemeta',sCine],['MyAnimeList',sMAL]];
+  return Promise.allSettled(S.map(([n,f])=>{
+    st&&st(n,'load');
+    return f(q,sg).then(r=>{if(sg.aborted)return;all.push(...r);if(r.length)on(r);st&&st(n,'ok',r.length)},()=>{if(!sg.aborted&&st)st(n,'err')});
+  })).then(()=>{if(!sg.aborted&&all.length)SC.set(k,all)});
 }
 async function doSearch(){
   const name=$('nameIn').value.trim(),my=++sid,hint=$('resHint');
   if(!name){$('nameIn').focus();return}
-  $('nameIn').blur();$('res').textContent='';$('manBtn').hidden=true;hint.textContent='⏳ در حال جستجو...';
+  $('nameIn').blur();seenR=new Map();$('srcs').textContent='';$('srcs').hidden=true;$('manBtn').hidden=true;
+  $('res').innerHTML='<div class="r sk"></div>'.repeat(6);hint.textContent='⏳ در حال جستجو...';applyTf();
   let n=0;
-  await searchProg(name,r=>{if(my!==sid)return;n+=r.length;addResults(r);hint.textContent='⏳ می‌توانی همین حالا انتخاب کنی؛ منابع دیگر هنوز در راه‌اند...'});
+  await searchProg(name,r=>{if(my!==sid)return;n+=r.length;addResults(r);hint.textContent='⏳ می‌توانی همین حالا انتخاب کنی؛ منابع دیگر هنوز در راه‌اند...'},(a,b,c)=>{if(my===sid)srcSt(a,b,c)});
   if(my!==sid)return;
+  $('res').querySelectorAll('.sk').forEach(e=>e.remove());
   hint.textContent=n?'نتیجه‌ی مورد نظر را انتخاب کن.':'چیزی پیدا نشد (شاید اینترنت یا VPN). می‌توانی دستی اضافه کنی.';
+  if(n)pushRecent(name);
   $('manBtn').hidden=false;
 }
 $('addBtn').onclick=doSearch;
 $('nameIn').addEventListener('keydown',e=>{if(e.key==='Enter'||e.keyCode===13){e.preventDefault();doSearch()}});
+const PANES={auto:'pAuto',man:'pMan',bulk:'pBulk',stats:'pStats',sheet:'pSheet'};
 function pane(p){
-  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
-  $('pAuto').hidden=p!=='auto';$('pMan').hidden=p!=='man';
-  setTimeout(()=>$(p==='auto'?'nameIn':'mName').focus(),0);
+  const hl=p==='sheet'?'auto':p;
+  document.querySelectorAll('.seg button').forEach(b=>b.classList.toggle('on',b.dataset.p===hl));
+  Object.entries(PANES).forEach(([k,id])=>$(id).hidden=k!==p);
+  if(p==='stats')renderStats();
+  const f={auto:'nameIn',man:'mName',bulk:'bulkIn'}[p];
+  if(f)setTimeout(()=>$(f).focus(),0);
 }
 document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>pane(b.dataset.p));
 $('manBtn').onclick=()=>{$('mName').value=$('nameIn').value.trim();pane('man')};
@@ -371,6 +566,7 @@ function dlLink(it){
 
 /* ---- رندر ---- */
 function render(){
+  drawHero();
   const grid=$('grid');grid.textContent='';TM=[];
   const q=$('q').value.trim().toLowerCase(),st=$('stF').value,so=$('sortF').value;
   const items=list.filter(i=>(filter==='all'||(filter==='movie'?i.type==='movie':i.type!=='movie'&&i.day===filter))&&(!q||i.name.toLowerCase().includes(q))&&(st==='all'||(i.state||'watching')===st));
@@ -413,7 +609,10 @@ function render(){
     const ds=c.querySelector('.dayS');ds.value=it.day;
     ds.onchange=()=>{it.day=ds.value;if(it.type!=='movie'&&!it.finished){it.target=nextFromDay(it.day);it.guess=true;it.upcoming=false;it.notified=false}save();render()};
     const sel=c.querySelector('.state');sel.value=it.state||'watching';sel.onchange=()=>{it.state=sel.value;save()};
-    c.querySelector('.settime').onclick=()=>{
+    c.querySelector('.settime').onclick=async()=>{
+      toast('⏳ در حال پیدا کردن زمان پخش...');
+      if(await autoTime(it)){toast('✅ زمان پخش خودکار پیدا شد: '+FMT.format(it.target));return}
+      toast('زمان خودکار پیدا نشد؛ دستی وارد کن');
       const v=prompt('زمان پخش قسمت بعدی (به وقت خودت). مثال: 2026-10-11 17:30',it.target?new Date(it.target-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,16).replace('T',' '):'');
       if(!v)return;const d=new Date(v.trim().replace(' ','T'));
       if(isNaN(d)){alert('فرمت درست نیست.');return}
@@ -423,7 +622,7 @@ function render(){
     c.querySelector('.next').onclick=()=>{
       it.episode++;it.notified=false;it.guess=false;it.target=(it.target||Date.now())+7*864e5;
       while(it.target<Date.now())it.target+=7*864e5;
-      save();render();
+      save();render();autoTime(it);
     };
     c.querySelector('.setlink').onclick=()=>{
       const v=prompt('لینک دانلود (برای شماره قسمت از {ep} استفاده کنید):',it.link||'');
@@ -455,6 +654,7 @@ function updateTimers(first){
     if(o.nx!==nx){o.nx=nx;o.nb.hidden=!nx}
     if(first)o.w.textContent=it.target&&!it.finished?'پخش: '+FMT.format(it.target+dl):'';
   });
+  heroTick();
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateTimers()});
 
@@ -496,6 +696,197 @@ $('mZar').onchange=()=>{
   $('mType').value=r.type;syncType();$('mName').value=r.name;$('mYear').value=r.year;$('mLink').value=r.link;
 };
 $('adminBtn').onclick=()=>{$('admin').hidden=false;pane('auto')};
+/* ---- Hero: نزدیک‌ترین قسمت ---- */
+let HI=null;const HC=new Map();
+const heroCands=()=>list.filter(i=>i.type!=='movie'&&!i.finished&&i.state!=='done'&&i.state!=='later'&&i.target).sort((a,b)=>a.target-b.target);
+function tintHero(src){
+  const h=$('hero');
+  if(!src||!src.startsWith('data:')){h.style.setProperty('--hc','99,102,241');return}
+  if(HC.has(src)){h.style.setProperty('--hc',HC.get(src));return}
+  const im=new Image();
+  im.onload=()=>{try{
+    const cv=document.createElement('canvas');cv.width=cv.height=8;const x=cv.getContext('2d');x.drawImage(im,0,0,8,8);
+    const d=x.getImageData(0,0,8,8).data;let r=0,g=0,b=0,n=0;
+    for(let i=0;i<d.length;i+=4){const w=1+(Math.max(d[i],d[i+1],d[i+2])-Math.min(d[i],d[i+1],d[i+2]))/32;r+=d[i]*w;g+=d[i+1]*w;b+=d[i+2]*w;n+=w}
+    let c=[r/n,g/n,b/n];const m=Math.max(...c);if(m<90){const k=90/Math.max(m,1);c=c.map(v=>v*k)}
+    const v=c.map(Math.round).join(',');HC.set(src,v);
+    if(HI&&HI.image===src)h.style.setProperty('--hc',v);
+  }catch(e){}};
+  im.src=src;
+}
+const shortLeft=ms=>{
+  if(ms<=0)return 'منتشر شد ✅';
+  const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);
+  return d>=1?toFa(d)+' روز دیگر':h>=1?toFa(h)+' ساعت دیگر':toFa(Math.max(m,1))+' دقیقه دیگر';
+};
+function drawHero(){
+  const h=$('hero'),c=heroCands();
+  if(!c.length){HI=null;h.hidden=true;return}
+  const it=c[0];HI=it;h.hidden=false;
+  $('hTitle').textContent=it.name;
+  $('hMeta').textContent=(TYPE_FA[it.type]||'')+(it.year?' • '+it.year:'')+' • قسمت '+toFa(it.episode)+' • پخش: '+FMT.format(it.target+delayMs());
+  const im=$('hImg');im.onerror=()=>{im.onerror=null;im.src=PH};
+  if(im.dataset.s!==(it.image||'')){im.dataset.s=it.image||'';im.src=it.image||PH}
+  $('hBg').style.backgroundImage=it.image?'url('+JSON.stringify(it.image)+')':'none';
+  tintHero(it.image);
+  $('hDl').href=dlLink(it);$('hDl').textContent='⬇ دانلود قسمت '+toFa(it.episode);
+  const nx=$('hNext'),dl=delayMs(),now=Date.now();nx.textContent='';
+  c.slice(1,6).forEach(x=>{
+    const b=document.createElement('div');b.className='mn';
+    const i=document.createElement('img');i.referrerPolicy='no-referrer';i.onerror=()=>{i.onerror=null;i.src=PH};i.src=x.image||PH;
+    const d=document.createElement('div'),t=document.createElement('b'),sm=document.createElement('small');
+    t.textContent=x.name;sm.textContent='قسمت '+toFa(x.episode)+' • '+shortLeft(x.target+dl-now);
+    d.append(t,sm);b.append(i,d);nx.appendChild(b);
+  });
+  heroTick();
+}
+function heroTick(){
+  const it=HI;if(!it)return;
+  const d=it.target+delayMs()-Date.now(),out=d<=0,p=n=>toFa(String(n).padStart(2,'0'));
+  $('hCd').hidden=out;$('hOut').hidden=!out;$('hDl').hidden=!out;$('hNx').hidden=!out;
+  $('hKick').textContent=out?'📥 آماده‌ی دانلود':'⏭ پخش بعدی'+(it.guess?' (تخمینی)':'');
+  if(!out){
+    $('cdD').textContent=toFa(Math.floor(d/864e5));$('cdH').textContent=p(Math.floor(d%864e5/36e5));
+    $('cdM').textContent=p(Math.floor(d%36e5/6e4));$('cdS').textContent=p(Math.floor(d%6e4/1e3));
+  }
+}
+$('hNx').onclick=()=>{
+  const it=HI;if(!it)return;
+  it.episode++;it.notified=false;it.guess=false;it.target=(it.target||Date.now())+7*864e5;
+  while(it.target<Date.now())it.target+=7*864e5;
+  save();render();autoTime(it);
+};
+
+/* ---- خروجی تقویم (.ics) ---- */
+const icsEsc=t=>String(t).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n');
+const icsDate=ms=>new Date(ms).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+const icsFold=l=>{const o=[];while(l.length>40){o.push(l.slice(0,40));l=' '+l.slice(40)}o.push(l);return o.join('\r\n')};
+$('icsBtn').onclick=()=>{
+  const dl=delayMs(),now=Date.now();
+  const items=list.filter(i=>i.type!=='movie'&&!i.finished&&i.state!=='done'&&i.target&&i.target+dl>now);
+  if(!items.length){alert('موردی با زمان پخش آینده برای خروجی وجود ندارد.');return}
+  const weekly=confirm('رویدادها هفتگی تکرار شوند؟ (۱۲ هفته)\nOK = بله، Cancel = فقط قسمت بعدی');
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//AniTracker//FA//','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:AniTracker'];
+  const stamp=icsDate(now);
+  items.forEach(i=>{
+    const st=i.target+dl;
+    L.push('BEGIN:VEVENT','UID:'+i.id+'-'+i.episode+'@anitracker','DTSTAMP:'+stamp,'DTSTART:'+icsDate(st),'DTEND:'+icsDate(st+45*6e4),
+      'SUMMARY:'+icsEsc('قسمت '+i.episode+' — '+i.name));
+    const lk=dlLink(i);if(lk)L.push('DESCRIPTION:'+icsEsc(lk));
+    if(weekly)L.push('RRULE:FREQ=WEEKLY;COUNT=12');
+    L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(i.name),'TRIGGER:PT0S','END:VALARM','END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([L.map(icsFold).join('\r\n')+'\r\n'],{type:'text/calendar;charset=utf-8'}));
+  a.download='anitracker.ics';a.click();
+  toast('📅 '+toFa(items.length)+' رویداد ساخته شد؛ فایل را در تقویمت باز کن');
+};
+
+/* ---- پنل ادمین پیشرفته ---- */
+function LS(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+let tf='all';
+function applyTf(){
+  const cnt={all:0,anime:0,show:0,movie:0};
+  document.querySelectorAll('#res .r:not(.sk)').forEach(b=>{cnt.all++;cnt[b.dataset.t]=(cnt[b.dataset.t]||0)+1;b.hidden=!(tf==='all'||b.dataset.t===tf)});
+  document.querySelectorAll('#tf .chip').forEach(c=>{c.classList.toggle('on',c.dataset.t===tf);c.querySelector('i').textContent=cnt[c.dataset.t]?toFa(cnt[c.dataset.t]):''});
+}
+document.querySelectorAll('#tf .chip').forEach(c=>c.onclick=()=>{tf=c.dataset.t;applyTf()});
+function getRecent(){try{return JSON.parse(LS('anitracker_recent')||'[]')}catch(e){return[]}}
+function pushRecent(n){const r=getRecent().filter(x=>x.toLowerCase()!==n.toLowerCase());r.unshift(n);LS('anitracker_recent',JSON.stringify(r.slice(0,8)));drawRecent()}
+function drawRecent(){
+  const box=$('recent'),r=getRecent();box.textContent='';box.hidden=!r.length;
+  r.forEach(n=>{const b=document.createElement('button');b.className='chip';b.textContent='🕘 '+n;b.onclick=()=>{$('nameIn').value=n;doSearch()};box.appendChild(b)});
+  if(r.length){const c=document.createElement('button');c.className='chip x';c.textContent='پاک کردن';c.onclick=()=>{LS('anitracker_recent','[]');drawRecent()};box.appendChild(c)}
+}
+drawRecent();
+const SRC_FA={IMDb:'IMDb',TVmaze:'TVmaze',Cinemeta:'Cinemeta',MyAnimeList:'MAL'};
+function srcSt(n,st,c){
+  const box=$('srcs');box.hidden=false;
+  let e=box.querySelector('[data-n="'+n+'"]');
+  if(!e){e=document.createElement('span');e.dataset.n=n;box.appendChild(e)}
+  e.className='src '+st;e.textContent=SRC_FA[n]+(st==='ok'?' · '+toFa(c):st==='err'?' ✕':' …');
+}
+$('quick').checked=LS('anitracker_quick')==='1';
+$('quick').onchange=()=>LS('anitracker_quick',$('quick').checked?'1':'0');
+
+/* صفحه‌ی تأیید قبل از افزودن */
+$('shDay').innerHTML=$('dayIn').innerHTML;
+let shP=null;
+function openSheet(p){
+  shP=p;const mv=p.type==='movie';
+  const im=$('shImg');im.onerror=()=>{im.onerror=null;im.src=PH};im.referrerPolicy='no-referrer';im.src=p.image||PH;
+  $('shTitle').textContent=p.title;$('shMeta').textContent=lbl(p);
+  $('shDup').hidden=!list.some(x=>nz(x.name)===nz(p.title));
+  document.querySelectorAll('#pSheet [data-sh]').forEach(e=>e.hidden=mv);
+  $('shDay').value=$('dayIn').value;$('shEp').value='';$('shLink').value='';$('shState').value='watching';
+  pane('sheet');
+}
+$('shBack').onclick=()=>pane('auto');
+$('shAdd').onclick=()=>{
+  const p=shP;if(!p)return;
+  const o={day:$('shDay').value,state:$('shState').value,episode:+$('shEp').value||0,link:$('shLink').value.trim()};
+  const b=$('shAdd');b.disabled=true;$('admin').hidden=true;
+  addFrom(p,'',addMsg(p),o).finally(()=>{b.disabled=false});
+};
+
+/* افزودن گروهی */
+$('bulkBtn').onclick=async()=>{
+  const names=[...new Set($('bulkIn').value.split('\n').map(x=>x.trim()).filter(Boolean))];
+  if(!names.length){toast('حداقل یک نام وارد کن');return}
+  const ty=$('bulkType').value,log=$('bulkLog'),btn=$('bulkBtn');
+  btn.disabled=true;log.textContent='';
+  const line=(t,c)=>{const d=document.createElement('div');d.className=c||'';d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight};
+  let ok=0;
+  for(let i=0;i<names.length;i++){
+    const n=names[i];
+    $('bulkProg').textContent='⏳ '+toFa(i+1)+' از '+toFa(names.length);
+    if(list.some(x=>nz(x.name)===nz(n))){line('↩ '+n+' — از قبل در لیست هست','dim');continue}
+    try{
+      let rs=await searchAll(n);
+      if(ty!=='auto')rs=rs.filter(x=>x.type===ty);
+      const nn=nz(n);
+      rs.sort((a,b)=>((nz(b.title)===nn)-(nz(a.title)===nn))||((RANK[b.src]||0)-(RANK[a.src]||0)));
+      const pk=rs[0];
+      if(!pk)line('⚠️ '+n+' — پیدا نشد','warn');
+      else{await addFrom(pk,'',null);ok++;line('✅ '+n+' → '+pk.title+' ('+(TYPE_FA[pk.type]||'')+')','ok')}
+    }catch(e){line('⚠️ '+n+' — خطا در جستجو','warn')}
+    await new Promise(r=>setTimeout(r,500));
+  }
+  btn.disabled=false;$('bulkProg').textContent='';toast('✅ '+toFa(ok)+' مورد اضافه شد');
+};
+
+/* آمار و ابزارها */
+function renderStats(){
+  const L=list,now=Date.now(),dl=delayMs(),c=f=>L.filter(f).length;
+  const live=i=>i.type!=='movie'&&!i.finished&&i.target;
+  const cards=[
+    ['📚','کل لیست',L.length],['🎌','انیمه',c(i=>i.type==='anime')],['📺','سریال',c(i=>i.type==='show')],['🎬','فیلم',c(i=>i.type==='movie')],
+    ['▶️','در حال دیدن',c(i=>(i.state||'watching')==='watching')],['⏸','بعداً',c(i=>i.state==='later')],['✅','دیده شده',c(i=>i.state==='done')],
+    ['⏰','پخش در ۲۴ ساعت آینده',c(i=>live(i)&&i.target+dl>now&&i.target+dl-now<864e5)],
+    ['📥','منتشر شده، منتظر دانلود',c(i=>live(i)&&i.target+dl<=now)],
+    ['❓','زمان تخمینی',c(i=>i.type!=='movie'&&!i.finished&&i.guess)]
+  ];
+  $('stats').innerHTML=cards.map(([e,t,n])=>'<div class="st"><b>'+e+' '+toFa(n)+'</b><span>'+t+'</span></div>').join('');
+}
+$('stRefresh').onclick=async()=>{
+  const b=$('stRefresh');b.disabled=true;let ok=0,tot=0;
+  for(const it of list.slice()){
+    if(it.type==='movie'||it.finished||it.state==='done')continue;
+    tot++;b.textContent='⏳ '+toFa(tot)+'...';
+    if(await autoTime(it))ok++;
+    await new Promise(r=>setTimeout(r,400));
+  }
+  b.disabled=false;b.textContent='🔄 به‌روزرسانی زمان پخش همه';renderStats();
+  toast('زمان '+toFa(ok)+' مورد از '+toFa(tot)+' به‌روز شد');
+};
+$('stClean').onclick=()=>{
+  const n=list.filter(i=>i.state==='done').length;
+  if(!n){toast('موردی با وضعیت «دیده شده» نیست');return}
+  if(!confirm(n+' مورد «دیده شده» حذف شود؟'))return;
+  list=list.filter(i=>i.state!=='done');save();render();renderStats();
+};
+
 const adOff=()=>$('admin').hidden=true;
 $('adClose').onclick=adOff;
 $('admin').addEventListener('mousedown',e=>{if(e.target===$('admin'))adOff()});
@@ -507,6 +898,7 @@ $('mAdd').onclick=async()=>{
   const it={id:uid(),name,type,year,day:$('mDay').value,episode:+$('mEp').value||1,image:$('mImg').value.trim(),target:0,link:$('mLink').value.trim(),state:'watching'};
   if(type!=='movie')fixTarget(it);
   list.push(it);save();render();
+  if(type!=='movie')autoTime(it).then(ok=>ok&&toast('✅ زمان پخش «'+name+'» خودکار پیدا شد'));
   ['mName','mYear','mImg','mLink','mZar'].forEach(id=>$(id).value='');
   $('admin').hidden=true;toast('«'+name+'» اضافه شد');
   if(!it.image){
@@ -544,7 +936,7 @@ $('impIn').onchange=async e=>{
   }catch(x){alert('فایل بکاپ معتبر نیست.')}
   e.target.value='';
 };
-render();setInterval(updateTimers,1000);setTimeout(fillMissing,1500);
+render();setInterval(updateTimers,1000);setTimeout(fillMissing,1500);setTimeout(autoRun,2500);
 </script>
 </body>
 </html>
