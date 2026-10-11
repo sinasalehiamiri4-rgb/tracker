@@ -181,13 +181,39 @@ button,summary,.btn{touch-action:manipulation}
 .mn b{display:block;font-size:.85rem;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mn small{color:var(--warn);font-size:.75rem}
 @media(max-width:700px){.hin{flex-direction:column;text-align:center;padding:18px}.hin>img{width:130px}.hcd{justify-content:center}.hcd div{min-width:60px}.hact{justify-content:center}.hnext{padding:0 14px 16px}}
+
+/* ---- فیلم‌ها و پیشنهادها ---- */
+.shead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:44px 0 20px;flex-wrap:wrap}
+.shead h2{margin:0}
+.shead .btn{display:inline-block;padding:10px 18px}
+.msec .hint{margin:0 0 14px}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.sg{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,border-color .15s}
+.sg:hover{transform:translateY(-3px);border-color:var(--accent)}
+.sg img{width:100%;aspect-ratio:2/3;object-fit:cover;background:#111;display:block}
+.sg .inf{padding:10px 10px 6px;display:grid;gap:4px;flex:1}
+.sg b{font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg small{color:var(--muted);font-size:.75rem}
+.sg .gn{color:#a5b4fc;font-size:.7rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg .acts{display:flex;gap:6px;padding:0 10px 10px}
+.sg .acts .btn{flex:1;padding:8px;font-size:.8rem}
+.sg .acts .no{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;width:36px;cursor:pointer}
+.sg .acts .no:hover{border-color:#f87171;color:#f87171}
+.sg.sk{aspect-ratio:2/3.6;border:0;background:linear-gradient(110deg,#181a22 30%,#242733 50%,#181a22 70%);background-size:200% 100%;animation:sk 1.4s linear infinite}
+#sgMore{margin:18px auto 0;width:auto;padding:10px 28px}
+#sgTabs{margin:0 0 14px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}
+#sgTabs .chip{white-space:nowrap;flex:none}
+#sgTabs .sep{width:1px;background:var(--line);flex:none;margin:2px 4px}
+#admin[data-mode=movie] #dayIn,#admin[data-mode=movie] #tf,#admin[data-mode=movie] .seg [data-p=stats]{display:none}
+#admin:not([data-mode=movie]) #tf [data-t=movie]{display:none}
+@media(max-width:700px){.sgrid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 <header>
   <a class="logo" href="./" aria-label="AniTracker"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#1e2029" stroke="#2d3139"/><circle cx="24" cy="24" r="15" fill="none" stroke="#2d3139" stroke-width="3"/><path d="M24 9a15 15 0 1 1-13.5 8.5" fill="none" stroke="#6366f1" stroke-width="3" stroke-linecap="round"/><circle cx="10.5" cy="17.5" r="2.6" fill="#f59e0b"/><path d="M20 17.5v13l11-6.5z" fill="#fff"/></svg><span>Ani<b>Tracker</b></span></a>
   <div class="hbtns">
-    <button class="btn" id="adminBtn">🛠 پنل ادمین</button>
+    <button class="btn" id="adminBtn">🛠 سریال و انیمه</button>
     <details class="menu">
       <summary class="btn ghost">⚙️ تنظیمات</summary>
       <div class="menubox">
@@ -227,6 +253,23 @@ button,summary,.btn{touch-action:manipulation}
     <select id="sortF"><option value="added">ترتیب افزودن</option><option value="time">نزدیک‌ترین پخش</option><option value="name">نام</option></select>
   </div>
   <div class="grid" id="grid"></div>
+
+  <section class="msec" id="mSec">
+    <div class="shead"><h2>🎬 فیلم‌های من</h2><button class="btn" id="addMovieBtn">➕ افزودن فیلم</button></div>
+    <div class="bar">
+      <input type="search" id="mq" placeholder="جستجو در فیلم‌ها...">
+      <select id="mstF"><option value="all">همه</option><option value="watching">می‌خوام ببینم</option><option value="later">بعداً</option><option value="done">دیدم</option></select>
+    </div>
+    <div class="grid" id="mgrid"></div>
+  </section>
+
+  <section class="msec" id="sgSec">
+    <div class="shead"><h2>✨ پیشنهاد فیلم</h2></div>
+    <div class="chips" id="sgTabs"></div>
+    <p class="hint" id="sgHint"></p>
+    <div class="sgrid" id="sgGrid"></div>
+    <button class="btn ghost" id="sgMore" hidden>بیشتر نشان بده</button>
+  </section>
 </div>
 
 <div class="modal" id="admin" hidden>
@@ -297,7 +340,7 @@ button,summary,.btn{touch-action:manipulation}
 <div class="toast" id="toast" hidden></div>
 
 <script>
-const DAYS=[['all','همه'],['saturday','شنبه'],['sunday','یکشنبه'],['monday','دوشنبه'],['tuesday','سه‌شنبه'],['wednesday','چهارشنبه'],['thursday','پنجشنبه'],['friday','جمعه'],['movie','🎬 فیلم‌ها']];
+const DAYS=[['all','همه'],['saturday','شنبه'],['sunday','یکشنبه'],['monday','دوشنبه'],['tuesday','سه‌شنبه'],['wednesday','چهارشنبه'],['thursday','پنجشنبه'],['friday','جمعه']];
 const JS_DAY={sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6};
 const TYPE_FA={anime:'انیمه',show:'سریال',movie:'فیلم'};
 const KEY='anitracker_v2';
@@ -370,7 +413,7 @@ async function sIMDB(q,sg){
   const k=/[a-z0-9]/.test(c)?c:'x';
   const j=await getJSON('https://v2.sg.media-imdb.com/suggestion/'+k+'/'+encodeURIComponent(q.trim())+'.json',4000,sg);
   return (j.d||[]).filter(x=>x.i&&x.l&&x.id&&x.id.startsWith('tt')).slice(0,6).map(x=>({
-    src:'IMDb',type:/series|episode/i.test(x.q||'')?'show':'movie',title:x.l,year:x.y||'',image:x.i.imageUrl,target:0}));
+    src:'IMDb',type:/series|episode/i.test(x.q||'')?'show':'movie',imdb:x.id,title:x.l,year:x.y||'',image:x.i.imageUrl,target:0}));
 }
 async function sTV(q,sg){
   const j=await getJSON('https://api.tvmaze.com/search/shows?q='+encodeURIComponent(q),4000,sg);
@@ -378,14 +421,14 @@ async function sTV(q,sg){
     src:'TVmaze',type:'show',title:x.show.name,year:(x.show.premiered||'').slice(0,4),
     image:x.show.image&&(x.show.image.original||x.show.image.medium)||'',target:0,tvid:x.show.id}));
 }
-async function sCine(q,sg){
+async function sCine(q,sg,kinds=['movie','series']){
   const one=async kind=>{
     const j=await getJSON('https://v3-cinemeta.strem.io/catalog/'+kind+'/top/search='+encodeURIComponent(q.trim())+'.json',5000,sg);
     return (j.metas||[]).filter(x=>x.name&&x.poster).slice(0,6).map(x=>({
-      src:'Cinemeta',type:kind==='movie'?'movie':'show',title:x.name,
+      src:'Cinemeta',type:kind==='movie'?'movie':'show',title:x.name,imdb:x.imdb_id||x.id,genres:x.genres||x.genre||[],rating:x.imdbRating||'',
       year:String(x.year||x.releaseInfo||'').slice(0,4),image:x.poster,target:0}));
   };
-  const rs=await Promise.allSettled([one('movie'),one('series')]);
+  const rs=await Promise.allSettled(kinds.map(one));
   return rs.flatMap(r=>r.status==='fulfilled'?r.value:[]);
 }
 async function searchAll(q){
@@ -422,6 +465,8 @@ async function addFrom(p,manualImg,done,o={}){
     }catch(e){}
   }
   if(p.tvid)it.tvid=p.tvid;
+  if(p.imdb)it.imdb=p.imdb;
+  if(p.genres&&p.genres.length)it.genres=p.genres;
   if(o.episode)it.episode=o.episode;
   if(o.link)it.link=o.link;
   fixTarget(it);
@@ -470,6 +515,7 @@ function addResults(items){
   $('res').querySelectorAll('.sk').forEach(e=>e.remove());
   const f=document.createDocumentFragment();
   items.forEach(p=>{
+    if(AM==='movie'?p.type!=='movie':p.type==='movie')return;
     const k=nz(p.title),old=seenR.get(k);
     if(old&&(!old.p.year||!p.year||String(old.p.year)===String(p.year))){
       if((RANK[p.src]||0)<=(RANK[old.p.src]||0))return;
@@ -499,10 +545,10 @@ function addResults(items){
 /* جستجوی همزمان؛ هر منبع به‌محض رسیدن نشان داده می‌شود، timeout دارد و نتیجه کش می‌شود */
 const SC=new Map();let sCtl,sid=0;
 function searchProg(q,on,st){
-  const k=q.toLowerCase();
+  const k=AM+':'+q.toLowerCase();
   if(SC.has(k)){on(SC.get(k));return Promise.resolve()}
   if(sCtl)sCtl.abort();sCtl=new AbortController();const sg=sCtl.signal,all=[];
-  const S=[['IMDb',sIMDB],['TVmaze',sTV],['Cinemeta',sCine],['MyAnimeList',sMAL]];
+  const S=AM==='movie'?[['IMDb',sIMDB],['Cinemeta',(a,b)=>sCine(a,b,['movie'])]]:[['IMDb',sIMDB],['TVmaze',sTV],['Cinemeta',(a,b)=>sCine(a,b,['series'])],['MyAnimeList',sMAL]];
   return Promise.allSettled(S.map(([n,f])=>{
     st&&st(n,'load');
     return f(q,sg).then(r=>{if(sg.aborted)return;all.push(...r);if(r.length)on(r);st&&st(n,'ok',r.length)},()=>{if(!sg.aborted&&st)st(n,'err')});
@@ -567,18 +613,21 @@ function dlLink(it){
 /* ---- رندر ---- */
 function render(){
   drawHero();
-  const grid=$('grid');grid.textContent='';TM=[];
+  const grid=$('grid');grid.textContent='';TM=[];const mgrid=$('mgrid');mgrid.textContent='';
   const q=$('q').value.trim().toLowerCase(),st=$('stF').value,so=$('sortF').value;
-  const items=list.filter(i=>(filter==='all'||(filter==='movie'?i.type==='movie':i.type!=='movie'&&i.day===filter))&&(!q||i.name.toLowerCase().includes(q))&&(st==='all'||(i.state||'watching')===st));
+  const items=list.filter(i=>i.type!=='movie'&&(filter==='all'||i.day===filter)&&(!q||i.name.toLowerCase().includes(q))&&(st==='all'||(i.state||'watching')===st));
+  const mq=$('mq').value.trim().toLowerCase(),mst=$('mstF').value;
+  const movies=list.filter(i=>i.type==='movie'&&(!mq||i.name.toLowerCase().includes(mq))&&(mst==='all'||(i.state||'watching')===mst));
+  if(so==='name')movies.sort((a,b)=>a.name.localeCompare(b.name));
   if(so==='time')items.sort((a,b)=>(a.target||9e15)-(b.target||9e15));
   else if(so==='name')items.sort((a,b)=>a.name.localeCompare(b.name));
   if(!items.length){
     const p=document.createElement('p');p.className='empty';
     p.textContent='چیزی برای این روز ثبت نشده. از بالا جستجو و اضافه کنید.';
-    grid.appendChild(p);return;
+    grid.appendChild(p);
   }
-  const fr=document.createDocumentFragment();
-  items.forEach(it=>{
+  const fr=document.createDocumentFragment(),frM=document.createDocumentFragment();
+  [...items,...movies].forEach(it=>{
     const movie=it.type==='movie';
     const c=document.createElement('div');c.className='card';
     c.innerHTML=`
@@ -607,8 +656,9 @@ function render(){
     c.querySelector('.dl').href=dlLink(it);
     c.querySelector('.srch').href=searchUrl(it);
     const ds=c.querySelector('.dayS');ds.value=it.day;
+    if(movie){ds.style.display='none';c.querySelector('.settime').style.display='none';c.querySelector('.row').style.gridTemplateColumns='repeat(2,1fr)'}
     ds.onchange=()=>{it.day=ds.value;if(it.type!=='movie'&&!it.finished){it.target=nextFromDay(it.day);it.guess=true;it.upcoming=false;it.notified=false}save();render()};
-    const sel=c.querySelector('.state');sel.value=it.state||'watching';sel.onchange=()=>{it.state=sel.value;save()};
+    const sel=c.querySelector('.state');if(movie){sel.options[0].text='می‌خوام ببینم';sel.options[2].text='دیدم'}sel.value=it.state||'watching';sel.onchange=()=>{it.state=sel.value;save()};
     c.querySelector('.settime').onclick=async()=>{
       toast('⏳ در حال پیدا کردن زمان پخش...');
       if(await autoTime(it)){toast('✅ زمان پخش خودکار پیدا شد: '+FMT.format(it.target));return}
@@ -632,9 +682,11 @@ function render(){
       const v=prompt('لینک عکس را وارد کنید:',it.image&&!it.image.startsWith('data:')?it.image:'');
       if(v){it.image=v.trim();save();render();const d=await cacheImg(it.image);if(d!==it.image){it.image=d;save();render()}}
     };
-    fr.appendChild(c);
+    (movie?frM:fr).appendChild(c);
   });
   grid.appendChild(fr);
+  mgrid.appendChild(frM);
+  if(!movies.length){const p=document.createElement('p');p.className='empty';p.textContent=list.some(i=>i.type==='movie')?'فیلمی با این فیلتر پیدا نشد.':'هنوز فیلمی اضافه نکردی. از «➕ افزودن فیلم» شروع کن.';mgrid.appendChild(p)}
   updateTimers(true);
 }
 function updateTimers(first){
@@ -695,7 +747,136 @@ $('mZar').onchange=()=>{
   const r=parseZar($('mZar').value.trim());if(!r){toast('این لینک زرفیلم نیست');return}
   $('mType').value=r.type;syncType();$('mName').value=r.name;$('mYear').value=r.year;$('mLink').value=r.link;
 };
-$('adminBtn').onclick=()=>{$('admin').hidden=false;pane('auto')};
+$('adminBtn').onclick=()=>openAdmin('series');
+$('addMovieBtn').onclick=()=>openAdmin('movie');
+/* ---- حالت‌های پنل: سریال/انیمه یا فیلم (کاملاً جدا) ---- */
+let AM='series';
+function openAdmin(mode){
+  AM=mode;const a=$('admin'),mv=mode==='movie';a.dataset.mode=mode;
+  $('adTitle').textContent=mv?'🎬 افزودن فیلم':'🛠 افزودن سریال و انیمه';
+  $('mType').innerHTML=mv?'<option value="movie">فیلم</option>':'<option value="show">سریال</option><option value="anime">انیمه</option>';
+  $('mType').closest('.fld').hidden=mv;
+  $('bulkType').innerHTML=mv?'<option value="movie">فقط فیلم</option>':'<option value="auto">نوع: خودکار</option><option value="anime">فقط انیمه</option><option value="show">فقط سریال</option>';
+  $('nameIn').placeholder=mv?'نام فیلم (انگلیسی): Inception ...':'نام انگلیسی: Naruto ، Breaking Bad ...';
+  $('nameIn').value='';$('res').textContent='';seenR=new Map();$('srcs').textContent='';$('srcs').hidden=true;$('manBtn').hidden=true;
+  $('resHint').textContent='نام را بنویس و Enter بزن؛ نتیجه‌ها همین‌جا و به‌محض رسیدن نمایش داده می‌شوند.';
+  tf='all';applyTf();syncType();
+  a.hidden=false;pane('auto');
+}
+
+/* ---- پیشنهاد فیلم (Cinemeta، بدون نیاز به کلید) ---- */
+const CINE='https://v3-cinemeta.strem.io';
+const GENRES=[['Action','اکشن'],['Comedy','کمدی'],['Drama','درام'],['Thriller','هیجانی'],['Horror','ترسناک'],['Sci-Fi','علمی‌تخیلی'],['Animation','انیمیشن'],['Romance','عاشقانه'],['Crime','جنایی'],['Adventure','ماجرایی'],['Fantasy','فانتزی'],['Mystery','معمایی']];
+const GFA=Object.fromEntries(GENRES);
+const SGC=new Map();
+let SGT=0;
+let SG={tab:'you',skip:0,pool:[],shown:0,end:false,busy:false,ids:new Set(),note:''};
+const getDis=()=>{try{return JSON.parse(LS('anitracker_dis')||'[]')}catch(e){return[]}};
+async function catalog(id,{genre,skip}={}){
+  const ex=[genre&&'genre='+genre,skip&&'skip='+skip].filter(Boolean).join('&');
+  const path=id+(ex?'/'+ex:'');
+  if(SGC.has(path))return SGC.get(path);
+  const j=await getJSON(CINE+'/catalog/movie/'+path+'.json',8000);
+  const r=(j.metas||[]).filter(x=>x.name&&x.poster).map(x=>({src:'Cinemeta',type:'movie',title:x.name,year:String(x.year||x.releaseInfo||'').slice(0,4),image:x.poster,imdb:x.imdb_id||x.id,genres:x.genres||x.genre||[],rating:x.imdbRating||'',target:0}));
+  SGC.set(path,r);return r;
+}
+async function ensureGenres(it){
+  try{
+    const j=await getJSON(CINE+'/catalog/movie/top/search='+encodeURIComponent(it.name)+'.json',5000);
+    const ms=j.metas||[];
+    const m=ms.find(x=>nz(x.name)===nz(it.name)&&(!it.year||String(x.year||x.releaseInfo||'').startsWith(String(it.year))))||ms.find(x=>nz(x.name)===nz(it.name));
+    it.genres=m?(m.genres||m.genre||[]):[];if(m&&!it.imdb)it.imdb=m.imdb_id||m.id;save();
+  }catch(e){}
+}
+async function profileGenres(){
+  const cnt={};
+  for(const it of list.filter(i=>i.type==='movie').slice(0,15)){
+    if(!it.genres)await ensureGenres(it);
+    (it.genres||[]).forEach(g=>{cnt[g]=(cnt[g]||0)+(it.state==='done'?2:1)});
+  }
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+}
+async function nextPage(){
+  const t=SG.tab,skip=SG.skip||undefined;
+  if(t==='top'){const r=await catalog('top',{skip});SG.skip+=r.length;return r}
+  if(t==='new'){
+    const y=new Date().getFullYear();
+    let r=await catalog('year',{genre:String(y),skip});
+    if(!r.length&&!SG.skip)r=await catalog('year',{genre:String(y-1)});
+    SG.skip+=r.length;return r;
+  }
+  if(t==='you'){
+    if(!SG.gen)SG.gen=await profileGenres();
+    if(!SG.gen.length){SG.note='هنوز فیلمی توی لیستت نیست، پس فعلاً محبوب‌ترین‌ها رو نشون می‌دم. چند فیلم اضافه کن تا بر اساس سلیقه‌ات پیشنهاد بدم.';const r=await catalog('top',{skip});SG.skip+=r.length;return r}
+    SG.note='بر اساس ژانرهای فیلم‌هات: '+SG.gen.map(g=>GFA[g]||g).join('، ');
+    const rs=(await Promise.allSettled(SG.gen.map(g=>catalog('top',{genre:g,skip})))).map(x=>x.status==='fulfilled'?x.value:[]);
+    SG.skip+=Math.max(0,...rs.map(r=>r.length));
+    const out=[];for(let i=0;i<Math.max(0,...rs.map(r=>r.length));i++)rs.forEach(r=>{if(r[i])out.push(r[i])});
+    return out;
+  }
+  const r=await catalog('top',{genre:t,skip});SG.skip+=r.length;return r;
+}
+function sgOk(p){
+  const key=p.imdb||nz(p.title);
+  if(SG.ids.has(key))return false;
+  if(list.some(x=>x.type==='movie'&&((x.imdb&&x.imdb===p.imdb)||nz(x.name)===nz(p.title))))return false;
+  if(getDis().includes(key))return false;
+  return true;
+}
+function sgCard(p){
+  const c=document.createElement('div');c.className='sg';
+  const im=document.createElement('img');im.referrerPolicy='no-referrer';im.loading='lazy';im.alt='';im.onerror=()=>{im.onerror=null;im.src=PH};im.src=p.image||PH;
+  const inf=document.createElement('div');inf.className='inf';
+  const t=document.createElement('b');t.textContent=p.title;t.title=p.title;
+  const sm=document.createElement('small');sm.textContent=(p.year||'')+(p.rating?' • ⭐ '+toFa(p.rating):'');
+  inf.append(t,sm);
+  if(p.genres&&p.genres.length){const g=document.createElement('div');g.className='gn';g.textContent=p.genres.slice(0,3).map(x=>GFA[x]||x).join(' • ');inf.appendChild(g)}
+  const ac=document.createElement('div');ac.className='acts';
+  const add=document.createElement('button');add.className='btn';add.textContent='➕ افزودن';
+  const no=document.createElement('button');no.className='no';no.textContent='✕';no.title='نمی‌خوام؛ دیگه نشون نده';
+  add.onclick=()=>{add.disabled=true;c.remove();addFrom(p,'',addMsg(p),{state:'watching'})};
+  no.onclick=()=>{const d=getDis();d.push(p.imdb||nz(p.title));LS('anitracker_dis',JSON.stringify(d.slice(-300)));c.remove()};
+  ac.append(add,no);c.append(im,inf,ac);return c;
+}
+async function loadSug(reset){
+  if(SG.busy)return;SG.busy=true;
+  const my=reset?++SGT:SGT;
+  const grid=$('sgGrid'),hint=$('sgHint'),more=$('sgMore');
+  if(reset){SG={tab:SG.tab,skip:0,pool:[],shown:0,end:false,busy:true,ids:new Set(),note:'',gen:SG.tab==='you'?undefined:SG.gen};grid.innerHTML='<div class="sg sk"></div>'.repeat(8);hint.textContent='';more.hidden=true}
+  const tab=SG.tab;
+  try{
+    let guard=0;
+    while(SG.pool.length-SG.shown<18&&!SG.end&&guard++<4){
+      const raw=await nextPage();
+      if(my!==SGT)return;
+      if(!raw.length){SG.end=true;break}
+      raw.forEach(p=>{if(sgOk(p)){SG.ids.add(p.imdb||nz(p.title));SG.pool.push(p)}});
+    }
+    grid.querySelectorAll('.sk').forEach(e=>e.remove());
+    const f=document.createDocumentFragment();
+    SG.pool.slice(SG.shown,SG.shown+18).forEach(p=>f.appendChild(sgCard(p)));
+    SG.shown=Math.min(SG.pool.length,SG.shown+18);
+    grid.appendChild(f);
+    hint.textContent=SG.note||'';
+    if(!grid.children.length)hint.textContent='پیشنهادی پیدا نشد (شاید اینترنت یا VPN). بعداً دوباره امتحان کن.';
+    more.hidden=!(SG.shown<SG.pool.length||!SG.end);
+  }catch(e){
+    grid.querySelectorAll('.sk').forEach(x=>x.remove());
+    if(!grid.children.length)hint.textContent='دریافت پیشنهادها ممکن نشد (شاید اینترنت یا VPN).';
+  }finally{if(my===SGT)SG.busy=false}
+}
+function drawSgTabs(){
+  const box=$('sgTabs');box.textContent='';
+  const mk=(k,l)=>{const b=document.createElement('button');b.className='chip'+(SG.tab===k?' on':'');b.textContent=l;b.onclick=()=>{if(SG.tab===k&&!SG.busy)return;SG.busy=false;SG.tab=k;drawSgTabs();loadSug(true)};box.appendChild(b)};
+  mk('you','⭐ برای تو');mk('top','🔥 محبوب');mk('new','🆕 جدید');
+  const sp=document.createElement('span');sp.className='sep';box.appendChild(sp);
+  GENRES.forEach(([k,l])=>mk(k,l));
+}
+drawSgTabs();
+$('sgMore').onclick=()=>loadSug(false);
+let sgStarted=false;const sgStart=()=>{if(sgStarted)return;sgStarted=true;loadSug(true)};
+if('IntersectionObserver' in window){const io=new IntersectionObserver(e=>{if(e[0].isIntersecting){sgStart();io.disconnect()}},{rootMargin:'300px'});io.observe($('sgSec'))}else sgStart();
+
 /* ---- Hero: نزدیک‌ترین قسمت ---- */
 let HI=null;const HC=new Map();
 const heroCands=()=>list.filter(i=>i.type!=='movie'&&!i.finished&&i.state!=='done'&&i.state!=='later'&&i.target).sort((a,b)=>a.target-b.target);
@@ -820,6 +1001,7 @@ function openSheet(p){
   $('shDup').hidden=!list.some(x=>nz(x.name)===nz(p.title));
   document.querySelectorAll('#pSheet [data-sh]').forEach(e=>e.hidden=mv);
   $('shDay').value=$('dayIn').value;$('shEp').value='';$('shLink').value='';$('shState').value='watching';
+  const so=$('shState').options;so[0].text=mv?'می‌خوام ببینم':'در حال دیدن';so[2].text=mv?'دیدم':'دیده شده';
   pane('sheet');
 }
 $('shBack').onclick=()=>pane('auto');
@@ -844,6 +1026,7 @@ $('bulkBtn').onclick=async()=>{
     if(list.some(x=>nz(x.name)===nz(n))){line('↩ '+n+' — از قبل در لیست هست','dim');continue}
     try{
       let rs=await searchAll(n);
+      if(AM==='series')rs=rs.filter(x=>x.type!=='movie');
       if(ty!=='auto')rs=rs.filter(x=>x.type===ty);
       const nn=nz(n);
       rs.sort((a,b)=>((nz(b.title)===nn)-(nz(a.title)===nn))||((RANK[b.src]||0)-(RANK[a.src]||0)));
@@ -910,7 +1093,7 @@ $('mAdd').onclick=async()=>{
   }
   if(it.image){it.image=await cacheImg(it.image);save();render()}
 };
-let rt;const rr=()=>{clearTimeout(rt);rt=setTimeout(render,120)};['q','stF','sortF'].forEach(id=>$(id).addEventListener('input',rr));
+let rt;const rr=()=>{clearTimeout(rt);rt=setTimeout(render,120)};['q','stF','sortF','mq','mstF'].forEach(id=>$(id).addEventListener('input',rr));
 $('delayBtn').onclick=()=>{
   let cur='';try{cur=localStorage.getItem('anitracker_delay')||''}catch(e){}
   const v=prompt('چند ساعت بعد از پخش اصلی، قسمت در سایت دانلود آپلود می‌شود؟ (مثلاً 24). صفر یعنی بدون تأخیر.',cur||'0');
