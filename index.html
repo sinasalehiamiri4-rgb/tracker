@@ -391,6 +391,37 @@ header{transition:transform .3s ease}
   .sgrid::-webkit-scrollbar{display:none}
   .sg{flex:0 0 152px;scroll-snap-align:start}
 }
+
+/* ===== تازه‌ها (خودکار، از Jikan) ===== */
+.nfs{margin:0 0 54px}
+.nfs .shead{margin-bottom:6px}
+.nflive{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;color:var(--muted);font-weight:600}
+.nflive::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(52,211,153,.2);animation:pulse 1.2s infinite alternate}
+.nfwrap{position:relative}
+.nfrow{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;padding:14px 2px 16px;scrollbar-width:none;overscroll-behavior-x:contain}
+.nfrow::-webkit-scrollbar{display:none}
+.nf{flex:0 0 clamp(148px,17vw,196px);scroll-snap-align:start;display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:transform .22s,border-color .22s}
+.nf:hover{transform:translateY(-4px);border-color:rgba(139,123,255,.5)}
+.nf .pw{position:relative;aspect-ratio:2/3;background:#111}
+.nf .pw img{width:100%;height:100%;object-fit:cover;display:block}
+.nf .pw::after{content:"";position:absolute;inset:auto 0 0;height:40%;background:linear-gradient(180deg,transparent,rgba(12,13,19,.9))}
+.nf .nw{position:absolute;top:10px;right:10px;z-index:2;background:var(--grad);color:#fff;font-size:.72rem;font-weight:800;padding:3px 11px;border-radius:999px;box-shadow:0 6px 16px rgba(99,102,241,.45)}
+.nf .pt{position:absolute;bottom:9px;right:10px;left:10px;z-index:2;font-size:.78rem;font-weight:700;color:#fff;display:flex;gap:6px;align-items:center;justify-content:space-between}
+.nf .pt .sc{color:var(--warn)}
+.nf .nb{padding:11px 12px 4px;flex:1;min-width:0}
+.nf .nb b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.9rem;line-height:1.5;min-height:3em}
+.nf .nb small{display:block;color:var(--muted);font-size:.74rem;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nf .na{padding:6px 12px 12px}
+.nf .na .btn{width:100%;min-height:36px;font-size:.8rem;padding:0 8px}
+.nf.sk{min-height:330px;border:0;background:linear-gradient(110deg,#181a22 30%,#242733 50%,#181a22 70%);background-size:200% 100%;animation:sk 1.4s linear infinite}
+.nfmsg{flex:1;text-align:center;color:var(--muted);padding:34px 16px;border:1px dashed var(--line2);border-radius:var(--r-lg);background:var(--surface)}
+.nfmsg .btn{margin-top:12px}
+.nfarr{position:absolute;top:42%;z-index:5;width:42px;height:42px;border-radius:50%;padding:0;background:rgba(14,15,23,.85);backdrop-filter:blur(8px);border:1px solid var(--line2);color:#fff;cursor:pointer;display:grid;place-items:center}
+.nfarr:hover{background:var(--accent2)}
+.nfarr[data-d="1"]{left:-12px}.nfarr[data-d="-1"]{right:-12px}
+.nfarr[data-d="1"] .ic{transform:scaleX(-1)}
+@media(hover:none),(max-width:700px){.nfarr{display:none}}
+@media(max-width:700px){.nfrow{margin:0 -12px;padding-inline:12px;gap:12px;scroll-padding-inline:12px}.nf{flex-basis:142px;border-radius:18px}.nf .nb b{font-size:.84rem}}
 </style>
 </head>
 <body>
@@ -451,6 +482,15 @@ header{transition:transform .3s ease}
       </div>
     </div>
     <div class="hnext" id="hNext"></div>
+  </section>
+    <section class="nfs" id="nfSec">
+    <div class="shead"><h2><span class="ti"><svg class="ic" aria-hidden="true"><use href="#i-sparkles"/></svg></span>تازه‌ها</h2><span class="nflive" id="nfLive">به‌روزرسانی خودکار</span></div>
+    <div class="chips" id="nfTabs" role="tablist"></div>
+    <div class="nfwrap">
+      <button class="nfarr" data-d="1" aria-label="قبلی"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></button>
+      <button class="nfarr" data-d="-1" aria-label="بعدی"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></button>
+      <div class="nfrow" id="nfRow" aria-live="polite"></div>
+    </div>
   </section>
     <div class="shead"><h2><span class="ti"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg></span>جدول پخش هفتگی</h2></div>
   <div class="tabs" id="tabs"></div>
@@ -1605,6 +1645,86 @@ $('impIn').onchange=async e=>{
 })();
 
 render();setInterval(updateTimers,1000);setTimeout(fillMissing,1500);setTimeout(autoRun,2500);
+
+/* ===== تازه‌ها: خودکار از Jikan؛ بدون افزودن دستی ===== */
+(function(){
+const J='https://api.jikan.moe/v4/',CK='anitracker_feed_',TTL=9*6e4;
+const TABS=[['today','امروز پخش می‌شود'],['recent','تازه منتشر شده'],['season','فصل جاری']];
+const FT=new Intl.DateTimeFormat('fa-IR',{hour:'2-digit',minute:'2-digit'});
+const FW=new Intl.DateTimeFormat('fa-IR',{weekday:'long',hour:'2-digit',minute:'2-digit'});
+const row=$('nfRow');let cur='today',my=0;
+const jstDay=()=>['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][new Date(Date.now()+9*36e5).getUTCDay()];
+function todayAt(t){const m=/^(\d{1,2}):(\d{2})$/.exec(t||'');if(!m)return 0;const j=new Date(Date.now()+9*36e5);return Date.UTC(j.getUTCFullYear(),j.getUTCMonth(),j.getUTCDate(),+m[1],+m[2])-9*36e5}
+const im=o=>{const i=o&&o.images&&(o.images.webp||o.images.jpg)||{};return i.large_image_url||i.image_url||''};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function fetchFeed(k){
+  try{const c=JSON.parse(localStorage.getItem(CK+k));if(c&&Date.now()-c.t<TTL)return c.d}catch(e){}
+  let d,seen=new Set();
+  const uniq=x=>!seen.has(x.id)&&seen.add(x.id);
+  const get=async u=>{try{return await getJSON(u,9000)}catch(e){await wait(1200);return await getJSON(u,9000)}};
+  if(k==='recent'){
+    const j=await get(J+'watch/episodes');
+    d=j.data.filter(x=>x.entry).map(x=>({id:x.entry.mal_id,title:x.entry.title,image:im(x.entry),ep:x.episodes&&x.episodes[0]&&x.episodes[0].title,fresh:true})).filter(uniq).slice(0,24);
+  }else{
+    const j=await get(k==='today'?J+'schedules?sfw=true&limit=25&filter='+jstDay():J+'seasons/now?sfw=true&limit=25');
+    d=j.data.map(a=>{const b=a.broadcast||{};return{id:a.mal_id,title:a.title,image:im(a),score:a.score,year:a.year,status:a.status,type:a.type,
+      at:k==='today'?todayAt(b.time):0,target:nextFromBroadcast(b.day,b.time)}}).filter(uniq);
+    if(k==='today')d.sort((x,y)=>(x.at||9e15)-(y.at||9e15));
+  }
+  try{localStorage.setItem(CK+k,JSON.stringify({t:Date.now(),d}))}catch(e){}
+  return d;
+}
+function card(a,k){
+  const el=document.createElement('article');el.className='nf';
+  const pw=document.createElement('div');pw.className='pw';
+  const i=document.createElement('img');i.referrerPolicy='no-referrer';i.loading='lazy';i.decoding='async';i.alt=a.title;i.onerror=()=>{i.onerror=null;i.src=PH};i.src=a.image||PH;pw.appendChild(i);
+  const now=Date.now(),out=a.at&&a.at<=now;
+  if(a.fresh||(out&&now-a.at<864e5)){const n=document.createElement('span');n.className='nw';n.textContent='جدید';pw.appendChild(n)}
+  const pt=document.createElement('div');pt.className='pt';
+  if(a.at){const s=document.createElement('span');s.textContent=out?'منتشر شد':FT.format(a.at);pt.appendChild(s)}
+  if(a.score){const s=document.createElement('span');s.className='sc';s.textContent='★ '+toFa(a.score);pt.appendChild(s)}
+  pw.appendChild(pt);
+  const nb=document.createElement('div');nb.className='nb';
+  const b=document.createElement('b');b.textContent=a.title;b.title=a.title;
+  const sm=document.createElement('small');
+  sm.textContent=a.ep?a.ep:(k==='season'&&a.target?'پخش: '+FW.format(a.target):[a.type,a.year].filter(Boolean).join(' • '));
+  nb.append(b,sm);
+  const na=document.createElement('div');na.className='na';
+  const btn=document.createElement('button');btn.className='btn ghost';
+  const has=()=>list.some(x=>nz(x.name)===nz(a.title));
+  const sync=()=>{const h=has();btn.disabled=h;btn.innerHTML=h?IC('check')+' در لیست توست':IC('plus')+' افزودن به لیست'};
+  sync();
+  btn.onclick=()=>{
+    const p={title:a.title,type:'anime',year:a.year||'',image:a.image,target:a.target||0,status:a.status};
+    addFrom(p,'',addMsg(p),{day:a.target?dayKey(a.target):'saturday'});sync();
+  };
+  na.appendChild(btn);el.append(pw,nb,na);return el;
+}
+async function show(k,silent){
+  const id=++my;
+  if(!silent)row.innerHTML='<div class="nf sk"></div>'.repeat(8);
+  try{
+    const d=await fetchFeed(k);if(id!==my)return;
+    row.textContent='';
+    if(!d.length){row.innerHTML='<div class="nfmsg">فعلاً چیزی برای نمایش نیست.</div>';return}
+    const f=document.createDocumentFragment();d.forEach(a=>f.appendChild(card(a,k)));row.appendChild(f);
+    $('nfLive').textContent='آخرین به‌روزرسانی: '+FT.format(Date.now());
+  }catch(e){
+    if(id!==my||silent)return;
+    row.innerHTML='<div class="nfmsg">دریافت لیست انیمه‌ها ناموفق بود (اینترنت یا VPN را چک کن).<br><button class="btn ghost">تلاش دوباره</button></div>';
+    row.querySelector('button').onclick=()=>{try{localStorage.removeItem(CK+k)}catch(x){}show(k)};
+  }
+}
+TABS.forEach(([k,l])=>{
+  const c=document.createElement('button');c.className='chip'+(k===cur?' on':'');c.textContent=l;c.setAttribute('role','tab');
+  c.onclick=()=>{document.querySelectorAll('#nfTabs .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cur=k;row.scrollTo({left:0});show(k)};
+  $('nfTabs').appendChild(c);
+});
+document.querySelectorAll('.nfarr').forEach(b=>b.onclick=()=>{const s=getComputedStyle(row).direction==='rtl'?-1:1;row.scrollBy({left:s*(+b.dataset.d===1?-1:1)*row.clientWidth*.85,behavior:'smooth'})});
+show(cur);
+setInterval(()=>{if(!document.hidden)show(cur,true)},10*6e4);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)show(cur,true)});
+})();
 </script>
 </body>
 </html>
